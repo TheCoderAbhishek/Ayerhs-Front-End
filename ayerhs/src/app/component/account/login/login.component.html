@@ -1,1 +1,48 @@
-<p>login works!</p>
+<div
+  class="min-h-screen flex items-center justify-center bg-login-bg bg-cover bg-center"
+>
+  <div
+    class="backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 border border-white border-opacity-30 rounded-2xl p-8 shadow-lg w-full max-w-sm"
+  >
+    <h2 class="text-3xl font-bold mb-6 text-center text-white">Login</h2>
+    <form>
+      <div class="mb-4">
+        <label class="block text-white text-sm mb-2" for="email">
+          Email
+        </label>
+        <input
+          class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+        />
+      </div>
+      <div class="mb-6">
+        <label class="block text-white text-sm mb-2" for="password">
+          Password
+        </label>
+        <input
+          class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+          id="password"
+          type="password"
+          placeholder="Enter your password"
+        />
+      </div>
+      <div class="flex items-center justify-between">
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+          type="button"
+        >
+          Sign In
+        </button>
+        <a
+          class="inline-block align-baseline text-sm text-white hover:text-cyan-400"
+          href="#"
+        >
+          Forgot Password?
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
