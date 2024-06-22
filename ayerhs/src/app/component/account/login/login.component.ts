@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -10,13 +10,14 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [FormsModule, HttpClientModule, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   passwordFieldType: string = 'password';
 
   togglePasswordVisibility(): void {
-    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+    this.passwordFieldType =
+      this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
   inLoginClientDto: InLoginClientDto;
@@ -28,22 +29,34 @@ export class LoginComponent {
     this.router.navigate(['/registration']);
   }
 
-  onLogin() {
-    this.http.post('https://localhost:44302/ayerhs-security/Account/LoginClient', this.inLoginClientDto).subscribe((response:any) => {
-      if (response.response === 1){
-        alert("Login Successful");
-      } else {
-        alert("Login Unuccessful");
-      }
-    })
+  onLogin(loginForm: NgForm) {
+    if (loginForm.invalid) {
+      Object.keys(loginForm.controls).forEach((field) => {
+        const control = loginForm.control.get(field);
+        control?.markAsTouched({ onlySelf: true });
+      });
+      return;
+    }
+    this.http
+      .post(
+        'https://localhost:44302/ayerhs-security/Account/LoginClient',
+        this.inLoginClientDto
+      )
+      .subscribe((response: any) => {
+        if (response.response === 1) {
+          alert('Login Successful');
+        } else {
+          alert('Login Unsuccessful');
+        }
+      });
   }
 }
 
-export class InLoginClientDto{
+export class InLoginClientDto {
   ClientEmail: string;
   ClientPassword: string;
-  constructor(){
-    this.ClientEmail='',
-    this.ClientPassword=''
+  constructor() {
+    this.ClientEmail = '';
+    this.ClientPassword = '';
   }
 }
