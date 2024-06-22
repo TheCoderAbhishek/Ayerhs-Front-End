@@ -5,7 +5,7 @@
     class="backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 border border-white border-opacity-30 rounded-2xl p-8 shadow-lg w-full max-w-sm"
   >
     <h2 class="text-3xl font-bold mb-6 text-center text-white">Register</h2>
-    <form #registerForm="ngForm">
+    <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)">
       <div class="mb-4">
         <label class="block text-white text-sm mb-2" for="name">Name</label>
         <input
@@ -16,12 +16,15 @@
           [(ngModel)]="registerFormDto.ClientName"
           name="ClientName"
           #clientName="ngModel"
-          [required]="true"
-          [maxlength]="100"
+          required
+          maxlength="100"
           autocomplete="name"
         />
         <div
-          *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)"
+          *ngIf="
+            clientName.invalid &&
+            (clientName.dirty || clientName.touched || registerForm.submitted)
+          "
           class="text-red-500 text-xs mt-1"
         >
           <div *ngIf="clientName.errors?.['required']">Name is required.</div>
@@ -43,13 +46,15 @@
           [(ngModel)]="registerFormDto.ClientUsername"
           name="ClientUsername"
           #clientUsername="ngModel"
-          [required]="true"
-          [maxlength]="20"
+          required
+          maxlength="20"
         />
         <div
           *ngIf="
             clientUsername.invalid &&
-            (clientUsername.dirty || clientUsername.touched)
+            (clientUsername.dirty ||
+              clientUsername.touched ||
+              registerForm.submitted)
           "
           class="text-red-500 text-xs mt-1"
         >
@@ -71,13 +76,14 @@
           [(ngModel)]="registerFormDto.ClientEmail"
           name="ClientEmail"
           #clientEmail="ngModel"
-          [required]="true"
+          required
           email
           autocomplete="clientEmail"
         />
         <div
           *ngIf="
-            clientEmail.invalid && (clientEmail.dirty || clientEmail.touched)
+            clientEmail.invalid &&
+            (clientEmail.dirty || clientEmail.touched || registerForm.submitted)
           "
           class="text-red-500 text-xs mt-1"
         >
@@ -99,9 +105,9 @@
           [(ngModel)]="registerFormDto.ClientPassword"
           name="ClientPassword"
           #clientPassword="ngModel"
-          [required]="true"
-          [minlength]="8"
-          [maxlength]="50"
+          required
+          minlength="8"
+          maxlength="50"
           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$"
         />
         <span
@@ -119,7 +125,9 @@
         <div
           *ngIf="
             clientPassword.invalid &&
-            (clientPassword.dirty || clientPassword.touched)
+            (clientPassword.dirty ||
+              clientPassword.touched ||
+              registerForm.submitted)
           "
           class="text-red-500 text-xs mt-1"
         >
@@ -151,13 +159,15 @@
           [(ngModel)]="registerFormDto.ClientMobileNumber"
           name="ClientMobileNumber"
           #clientMobileNumber="ngModel"
-          [required]="true"
+          required
           pattern="[0-9]{10}"
         />
         <div
           *ngIf="
             clientMobileNumber.invalid &&
-            (clientMobileNumber.dirty || clientMobileNumber.touched)
+            (clientMobileNumber.dirty ||
+              clientMobileNumber.touched ||
+              registerForm.submitted)
           "
           class="text-red-500 text-xs mt-1"
         >
@@ -181,11 +191,14 @@
           [(ngModel)]="registerFormDto.RoleId"
           name="RoleId"
           #roleId="ngModel"
-          [required]="true"
-          [min]="1"
+          required
+          min="1"
         />
         <div
-          *ngIf="roleId.invalid && (roleId.dirty || roleId.touched)"
+          *ngIf="
+            roleId.invalid &&
+            (roleId.dirty || roleId.touched || registerForm.submitted)
+          "
           class="text-red-500 text-xs mt-1"
         >
           <div *ngIf="roleId.errors?.['required']">Role ID is required.</div>
@@ -199,9 +212,15 @@
           class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
           type="submit"
           [disabled]="registerForm.invalid"
-          (click)="onRegister()"
         >
           Register
+        </button>
+        <button
+          class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+          type="button"
+          (click)="navigateToLogin()"
+        >
+          Back
         </button>
       </div>
     </form>

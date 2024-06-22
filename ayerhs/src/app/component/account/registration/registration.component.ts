@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [FormsModule, HttpClientModule, CommonModule],
   templateUrl: './registration.component.html',
-  styleUrl: './registration.component.css',
+  styleUrls: ['./registration.component.css'],
 })
 export class RegistrationComponent {
   passwordFieldType: string = 'password';
@@ -22,14 +23,25 @@ export class RegistrationComponent {
     RoleId: null,
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   togglePasswordVisibility(): void {
     this.passwordFieldType =
       this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
-  onRegister() {
+  navigateToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  onRegister(registerForm: NgForm) {
+    if (registerForm.invalid) {
+      Object.keys(registerForm.controls).forEach((field) => {
+        const control = registerForm.control.get(field);
+        control?.markAsTouched({ onlySelf: true });
+      });
+      return;
+    }
     this.http
       .post(
         'https://localhost:44302/ayerhs-security/Account/RegisterClient',
