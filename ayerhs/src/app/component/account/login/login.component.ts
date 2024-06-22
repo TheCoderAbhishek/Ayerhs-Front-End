@@ -8,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  passwordFieldType: string = 'password';
 
+  togglePasswordVisibility(): void {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
 }

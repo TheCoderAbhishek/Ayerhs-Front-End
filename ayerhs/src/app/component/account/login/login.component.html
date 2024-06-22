@@ -7,9 +7,7 @@
     <h2 class="text-3xl font-bold mb-6 text-center text-white">Login</h2>
     <form>
       <div class="mb-4">
-        <label class="block text-white text-sm mb-2" for="email">
-          Email
-        </label>
+        <label class="block text-white text-sm mb-2" for="email"> Email </label>
         <input
           class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="email"
@@ -18,16 +16,28 @@
           autocomplete="email"
         />
       </div>
-      <div class="mb-6">
+      <div class="mb-6 relative">
         <label class="block text-white text-sm mb-2" for="password">
           Password
         </label>
         <input
           class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
           id="password"
-          type="password"
+          [type]="passwordFieldType"
           placeholder="Enter your password"
         />
+        <span
+          class="absolute right-3 top-9 text-gray-600 cursor-pointer"
+          (click)="togglePasswordVisibility()"
+        >
+          <i
+            [class]="
+              passwordFieldType === 'password'
+                ? 'fas fa-eye'
+                : 'fas fa-eye-slash'
+            "
+          ></i>
+        </span>
       </div>
       <div class="flex items-center justify-between">
         <button
@@ -37,7 +47,7 @@
           Sign In
         </button>
         <a
-          class="inline-block align-baseline text-sm text-white hover:text-cyan-400"
+          class="inline-block align-baseline text-sm text-white hover:text-blue-500"
           href="#"
         >
           Forgot Password?
