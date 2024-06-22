@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -19,8 +20,12 @@ export class LoginComponent {
   }
 
   inLoginClientDto: InLoginClientDto;
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.inLoginClientDto = new InLoginClientDto();
+  }
+
+  navigateToRegistration() {
+    this.router.navigate(['/registration']);
   }
 
   onLogin() {
