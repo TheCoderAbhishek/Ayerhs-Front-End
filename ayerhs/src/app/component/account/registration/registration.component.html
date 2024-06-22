@@ -18,6 +18,7 @@
           #clientName="ngModel"
           [required]="true"
           [maxlength]="100"
+          autocomplete="name"
         />
         <div
           *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)"
@@ -35,6 +36,7 @@
         >
         <input
           class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          autocomplete="username"
           id="username"
           type="text"
           placeholder="Enter your username"
@@ -71,6 +73,7 @@
           #clientEmail="ngModel"
           [required]="true"
           email
+          autocomplete="clientEmail"
         />
         <div
           *ngIf="
