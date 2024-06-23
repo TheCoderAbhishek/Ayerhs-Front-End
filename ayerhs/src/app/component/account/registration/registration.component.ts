@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +24,11 @@ export class RegistrationComponent {
     RoleId: null,
   };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private accountService: AccountService
+  ) {}
 
   togglePasswordVisibility(): void {
     this.passwordFieldType =
@@ -54,9 +59,22 @@ export class RegistrationComponent {
               'Registration Successful. Do you want to activate your account now?'
             )
           ) {
-            this.router.navigate(['/otp-verification'], {
-              queryParams: { email: this.registerFormDto.ClientEmail },
-            });
+            this.accountService
+              .generateOtp(this.registerFormDto.ClientEmail)
+              .subscribe(
+                (otpResponse: any) => {
+                  if (otpResponse.response === 1) {
+                    this.router.navigate(['/otp-verification'], {
+                      queryParams: { email: this.registerFormDto.ClientEmail },
+                    });
+                  } else {
+                    alert('OTP Generation Failed: ' + otpResponse.errorMessage);
+                  }
+                },
+                (error) => {
+                  alert('An error occurred while generating OTP.');
+                }
+              );
           } else {
             this.router.navigate(['/login']);
           }
