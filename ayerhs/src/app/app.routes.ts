@@ -3,6 +3,7 @@ import { LoginComponent } from './component/account/login/login.component';
 import { RegistrationComponent } from './component/account/registration/registration.component';
 import { LayoutComponent } from './component/layout/layout/layout.component';
 import { DashboardComponent } from './component/layout/dashboard/dashboard.component';
+import { OtpVerificationComponent } from './component/account/otp-verification/otp-verification.component';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,10 @@ export const routes: Routes = [
   {
     path: 'registration',
     component: RegistrationComponent,
+  },
+  {
+    path: 'otp-verification',
+    component: OtpVerificationComponent,
   },
   {
     path: '',
