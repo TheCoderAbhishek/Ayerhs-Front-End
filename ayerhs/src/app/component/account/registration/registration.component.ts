@@ -54,7 +54,9 @@ export class RegistrationComponent {
               'Registration Successful. Do you want to activate your account now?'
             )
           ) {
-            this.router.navigate(['/otp-verification']);
+            this.router.navigate(['/otp-verification'], {
+              queryParams: { email: this.registerFormDto.ClientEmail },
+            });
           } else {
             this.router.navigate(['/login']);
           }

@@ -23,7 +23,6 @@ export class OtpVerificationComponent {
   ) {}
 
   ngOnInit(): void {
-    // Assuming the email is passed as a query parameter
     this.email = this.route.snapshot.queryParamMap.get('email') || '';
   }
 
