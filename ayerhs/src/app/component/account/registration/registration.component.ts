@@ -49,7 +49,15 @@ export class RegistrationComponent {
       )
       .subscribe((response: any) => {
         if (response.response === 1) {
-          alert('Registration Successful');
+          if (
+            confirm(
+              'Registration Successful. Do you want to activate your account now?'
+            )
+          ) {
+            this.router.navigate(['/otp-verification']);
+          } else {
+            this.router.navigate(['/login']);
+          }
         } else {
           alert('Registration Unsuccessful');
         }
