@@ -1,19 +1,26 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { LoaderService } from '../../layout/loader/loader.service';
+import { LoaderComponent } from '../../layout/loader/loader.component';
+import { AccountService } from '../account.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, CommonModule],
+  imports: [FormsModule, HttpClientModule, CommonModule, LoaderComponent],
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.css'],
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnDestroy {
   passwordFieldType: string = 'password';
+  isLoading = false;
+  private subscription: Subscription;
+
   registerFormDto: RegisterFormDto = {
     ClientName: '',
     ClientUsername: '',
@@ -23,7 +30,21 @@ export class RegistrationComponent {
     RoleId: null,
   };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private accountService: AccountService,
+    private loaderService: LoaderService
+  ) {
+    this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
+      this.isLoading = isLoading;
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loaderService.setLoading(false);
+      }
+    });
+  }
 
   togglePasswordVisibility(): void {
     this.passwordFieldType =
@@ -31,6 +52,7 @@ export class RegistrationComponent {
   }
 
   navigateToLogin() {
+    this.loaderService.setLoading(true);
     this.router.navigate(['/login']);
   }
 
@@ -42,18 +64,60 @@ export class RegistrationComponent {
       });
       return;
     }
+    this.loaderService.setLoading(true);
     this.http
       .post(
         'https://localhost:44302/ayerhs-security/Account/RegisterClient',
         this.registerFormDto
       )
-      .subscribe((response: any) => {
-        if (response.response === 1) {
-          alert('Registration Successful');
-        } else {
-          alert('Registration Unsuccessful');
+      .subscribe(
+        (response: any) => {
+          this.loaderService.setLoading(false);
+          if (response.response === 1) {
+            if (
+              confirm(
+                'Registration Successful. Do you want to activate your account now?'
+              )
+            ) {
+              this.loaderService.setLoading(true);
+              this.accountService
+                .generateOtp(this.registerFormDto.ClientEmail)
+                .subscribe(
+                  (otpResponse: any) => {
+                    this.loaderService.setLoading(false);
+                    if (otpResponse.response === 1) {
+                      this.router.navigate(['/otp-verification'], {
+                        queryParams: {
+                          email: this.registerFormDto.ClientEmail,
+                        },
+                      });
+                    } else {
+                      alert(
+                        'OTP Generation Failed: ' + otpResponse.errorMessage
+                      );
+                    }
+                  },
+                  (error) => {
+                    this.loaderService.setLoading(false);
+                    alert('An error occurred while generating OTP.');
+                  }
+                );
+            } else {
+              this.router.navigate(['/login']);
+            }
+          } else {
+            alert('Registration Unsuccessful');
+          }
+        },
+        (error) => {
+          this.loaderService.setLoading(false);
+          alert('An error occurred during registration.');
         }
-      });
+      );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }
 
