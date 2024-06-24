@@ -55,6 +55,11 @@ export class ActivateAccountComponent implements OnDestroy {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
           alert(response.successMessage);
+          this.router.navigate(['/otp-verification'], {
+            queryParams: {
+              email: this.inOtpRequestDto.Email,
+            },
+          });
         } else {
           alert(response.errorMessage);
         }
