@@ -64,9 +64,9 @@ export class LoginComponent {
       .subscribe((response: any) => {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
-          alert('Login Successful');
+          alert(response.successMessage);
         } else {
-          alert('Login Unsuccessful');
+          alert(response.errorMessage);
         }
       });
   }
