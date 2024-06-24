@@ -65,55 +65,48 @@ export class RegistrationComponent implements OnDestroy {
       return;
     }
     this.loaderService.setLoading(true);
-    this.http
-      .post(
-        'https://localhost:44302/ayerhs-security/Account/RegisterClient',
-        this.registerFormDto
-      )
-      .subscribe(
-        (response: any) => {
-          this.loaderService.setLoading(false);
-          if (response.response === 1) {
-            if (
-              confirm(
-                'Registration Successful. Do you want to activate your account now?'
-              )
-            ) {
-              this.loaderService.setLoading(true);
-              this.accountService
-                .generateOtp(this.registerFormDto.ClientEmail)
-                .subscribe(
-                  (otpResponse: any) => {
-                    this.loaderService.setLoading(false);
-                    if (otpResponse.response === 1) {
-                      this.router.navigate(['/otp-verification'], {
-                        queryParams: {
-                          email: this.registerFormDto.ClientEmail,
-                        },
-                      });
-                    } else {
-                      alert(
-                        'OTP Generation Failed: ' + otpResponse.errorMessage
-                      );
-                    }
-                  },
-                  (error) => {
-                    this.loaderService.setLoading(false);
-                    alert('An error occurred while generating OTP.');
+    this.accountService.registerClient(this.registerFormDto).subscribe(
+      (response: any) => {
+        this.loaderService.setLoading(false);
+        if (response.response === 1) {
+          if (
+            confirm(
+              'Registration Successful. Do you want to activate your account now?'
+            )
+          ) {
+            this.loaderService.setLoading(true);
+            this.accountService
+              .generateOtp(this.registerFormDto.ClientEmail)
+              .subscribe(
+                (otpResponse: any) => {
+                  this.loaderService.setLoading(false);
+                  if (otpResponse.response === 1) {
+                    this.router.navigate(['/otp-verification'], {
+                      queryParams: {
+                        email: this.registerFormDto.ClientEmail,
+                      },
+                    });
+                  } else {
+                    alert('OTP Generation Failed: ' + otpResponse.errorMessage);
                   }
-                );
-            } else {
-              this.router.navigate(['/login']);
-            }
+                },
+                (error) => {
+                  this.loaderService.setLoading(false);
+                  alert('An error occurred while generating OTP.');
+                }
+              );
           } else {
-            alert('Registration Unsuccessful');
+            this.router.navigate(['/login']);
           }
-        },
-        (error) => {
-          this.loaderService.setLoading(false);
-          alert('An error occurred during registration.');
+        } else {
+          alert('Registration Unsuccessful');
         }
-      );
+      },
+      (error) => {
+        this.loaderService.setLoading(false);
+        alert('An error occurred during registration.');
+      }
+    );
   }
 
   ngOnDestroy() {

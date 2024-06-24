@@ -14,9 +14,17 @@ export class AccountService {
     return this.http.post(`${this.baseUrl}/LoginClient`, loginData);
   }
 
+  registerClient(registerData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/RegisterClient`, registerData);
+  }
+
   generateOtp(email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/OtpGenerationAndEmail`, {
       Email: email,
     });
+  }
+
+  verifyOtp(otpData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/OtpVerification`, otpData);
   }
 }

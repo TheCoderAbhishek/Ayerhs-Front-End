@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-otp-verification',
@@ -19,7 +20,8 @@ export class OtpVerificationComponent {
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
@@ -40,18 +42,19 @@ export class OtpVerificationComponent {
       otp: this.otp,
     };
 
-    this.http
-      .post(
-        'https://localhost:44302/ayerhs-security/Account/OtpVerification',
-        otpVerificationDto
-      )
-      .subscribe((response: any) => {
+    this.accountService.verifyOtp(otpVerificationDto).subscribe(
+      (response: any) => {
         if (response.response === 1) {
           alert('OTP Verification Successful');
           this.router.navigate(['/login']);
         } else {
           alert('OTP Verification Unsuccessful');
         }
-      });
+      },
+      (error) => {
+        console.error('Error occurred during OTP verification:', error);
+        alert('An error occurred during OTP verification.');
+      }
+    );
   }
 }
