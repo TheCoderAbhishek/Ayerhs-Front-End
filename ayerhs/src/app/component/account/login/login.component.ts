@@ -47,6 +47,11 @@ export class LoginComponent {
     this.router.navigate(['/registration']);
   }
 
+  navigateToActivateAccount() {
+    this.loaderService.setLoading(true);
+    this.router.navigate(['/activate-account']);
+  }
+
   onLogin(loginForm: NgForm) {
     if (loginForm.invalid) {
       Object.keys(loginForm.controls).forEach((field) => {
