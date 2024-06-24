@@ -7,6 +7,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { Subscription } from 'rxjs';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,8 @@ export class LoginComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private accountService: AccountService
   ) {
     this.inLoginClientDto = new InLoginClientDto();
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
@@ -61,19 +63,20 @@ export class LoginComponent {
       return;
     }
     this.loaderService.setLoading(true);
-    this.http
-      .post(
-        'https://localhost:44302/ayerhs-security/Account/LoginClient',
-        this.inLoginClientDto
-      )
-      .subscribe((response: any) => {
+    this.accountService.loginClient(this.inLoginClientDto).subscribe(
+      (response: any) => {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
           alert(response.successMessage);
         } else {
           alert(response.errorMessage);
         }
-      });
+      },
+      (error) => {
+        console.error('Login request failed', error);
+        this.loaderService.setLoading(false);
+      }
+    );
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();

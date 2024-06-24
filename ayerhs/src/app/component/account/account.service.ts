@@ -10,6 +10,10 @@ export class AccountService {
 
   constructor(private http: HttpClient) {}
 
+  loginClient(loginData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/LoginClient`, loginData);
+  }
+
   generateOtp(email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/OtpGenerationAndEmail`, {
       Email: email,
