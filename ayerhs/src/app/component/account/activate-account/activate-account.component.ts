@@ -37,6 +37,11 @@ export class ActivateAccountComponent implements OnDestroy {
     });
   }
 
+  navigateToLogin() {
+    this.loaderService.setLoading(true);
+    this.router.navigate(['/login']);
+  }
+
   onActivateAccount(activateAccountForm: NgForm) {
     if (activateAccountForm.invalid) {
       Object.keys(activateAccountForm.controls).forEach((field) => {
