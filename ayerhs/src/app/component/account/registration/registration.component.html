@@ -183,17 +183,18 @@
         <label class="block text-white text-sm mb-2" for="roleId"
           >Role ID</label
         >
-        <input
-          class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        <select
+          class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
           id="roleId"
-          type="number"
-          placeholder="Enter role ID"
           [(ngModel)]="registerFormDto.RoleId"
           name="RoleId"
           #roleId="ngModel"
           required
-          min="1"
-        />
+        >
+          <option value="" disabled [ngValue]="null">Select your role</option>
+          <option value="1">SuperAdmin</option>
+          <option value="2">Admin</option>
+        </select>
         <div
           *ngIf="
             roleId.invalid &&
@@ -202,9 +203,6 @@
           class="text-red-500 text-xs mt-1"
         >
           <div *ngIf="roleId.errors?.['required']">Role ID is required.</div>
-          <div *ngIf="roleId.errors?.['min']">
-            Role ID must be a positive number.
-          </div>
         </div>
       </div>
       <div class="flex items-center justify-between">
