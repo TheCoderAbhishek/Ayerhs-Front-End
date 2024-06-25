@@ -5,6 +5,8 @@ import { LayoutComponent } from './component/layout/layout/layout.component';
 import { DashboardComponent } from './component/layout/dashboard/dashboard.component';
 import { OtpVerificationComponent } from './component/account/otp-verification/otp-verification.component';
 import { ActivateAccountComponent } from './component/account/activate-account/activate-account.component';
+import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
+import { PasswordResetComponent } from './component/account/password-reset/password-reset.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +29,14 @@ export const routes: Routes = [
   {
     path: 'activate-account',
     component: ActivateAccountComponent
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent
+  },
+  {
+    path: 'password-reset',
+    component: PasswordResetComponent
   },
   {
     path: '',
