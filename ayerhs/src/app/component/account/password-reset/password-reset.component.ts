@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { Subscription } from 'rxjs';
@@ -22,6 +22,7 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
   confirmPassword: string = '';
   isLoading = false;
   private subscription: Subscription;
+  passwordFieldType: string = 'password';
 
   constructor(
     private http: HttpClient,
@@ -43,6 +44,11 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       this.email = params['email'];
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordFieldType =
+      this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
   onPasswordReset(passwordResetForm: NgForm) {
