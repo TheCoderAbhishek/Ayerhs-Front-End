@@ -56,6 +56,11 @@ export class LoginComponent {
     this.router.navigate(['/activate-account']);
   }
 
+  navigateForgotPassword(){
+    this.loaderService.setLoading(true);
+    this.router.navigate(['/forgot-password']);
+  }
+
   onLogin(loginForm: NgForm) {
     if (loginForm.invalid) {
       Object.keys(loginForm.controls).forEach((field) => {

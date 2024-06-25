@@ -18,9 +18,10 @@ export class AccountService {
     return this.http.post(`${this.baseUrl}/RegisterClient`, registerData);
   }
 
-  generateOtp(email: string): Observable<any> {
+  generateOtp(email: string, use: number = 1): Observable<any> {
     return this.http.post(`${this.baseUrl}/OtpGenerationAndEmail`, {
       Email: email,
+      Use: use,
     });
   }
 

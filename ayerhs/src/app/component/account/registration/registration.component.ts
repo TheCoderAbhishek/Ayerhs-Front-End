@@ -81,7 +81,7 @@ export class RegistrationComponent implements OnDestroy {
           ) {
             this.loaderService.setLoading(true);
             this.accountService
-              .generateOtp(this.registerFormDto.ClientEmail)
+              .generateOtp(this.registerFormDto.ClientEmail, 1)
               .subscribe(
                 (otpResponse: any) => {
                   this.loaderService.setLoading(false);
