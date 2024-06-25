@@ -61,13 +61,13 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
     }
     this.loaderService.setLoading(true);
     const resetPasswordDto = {
-      Email: this.email,
+      ClientEmail: this.email,
       Otp: this.otp,
-      Password: this.password,
+      ClientPassword: this.password,
     };
     this.http
       .post(
-        'https://localhost:44302/ayerhs-security/Account/ResetPassword',
+        'https://localhost:44302/ayerhs-security/Account/ForgotClientPassword',
         resetPasswordDto
       )
       .subscribe(
