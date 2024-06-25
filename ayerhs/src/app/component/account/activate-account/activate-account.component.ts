@@ -7,6 +7,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { Subscription } from 'rxjs';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-activate-account',
@@ -24,7 +25,8 @@ export class ActivateAccountComponent implements OnDestroy {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private accountService: AccountService
   ) {
     this.inOtpRequestDto = new InOtpRequestDto();
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
@@ -51,11 +53,9 @@ export class ActivateAccountComponent implements OnDestroy {
       return;
     }
     this.loaderService.setLoading(true);
-    this.http
-      .post(
-        'https://localhost:44302/ayerhs-security/Account/OtpGenerationAndEmail',
-        this.inOtpRequestDto
-      )
+    this.inOtpRequestDto.Use = 1;
+    this.accountService
+      .generateOtp(this.inOtpRequestDto.Email, 1)
       .subscribe((response: any) => {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
@@ -78,8 +78,10 @@ export class ActivateAccountComponent implements OnDestroy {
 
 export class InOtpRequestDto {
   Email: string;
+  Use: number;
 
   constructor() {
     this.Email = '';
+    this.Use = 1;
   }
 }
