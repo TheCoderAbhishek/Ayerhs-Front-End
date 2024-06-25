@@ -8,6 +8,7 @@ import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../account.service';
+import { EncryptionService } from '../../../shared/encryptionService/encryption.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,8 @@ export class LoginComponent {
     private http: HttpClient,
     private router: Router,
     private loaderService: LoaderService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private encryptionService: EncryptionService
   ) {
     this.inLoginClientDto = new InLoginClientDto();
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
@@ -62,6 +64,9 @@ export class LoginComponent {
       });
       return;
     }
+
+    this.inLoginClientDto.ClientPassword = this.encryptionService.encrypt(this.inLoginClientDto.ClientPassword);
+
     this.loaderService.setLoading(true);
     this.accountService.loginClient(this.inLoginClientDto).subscribe(
       (response: any) => {

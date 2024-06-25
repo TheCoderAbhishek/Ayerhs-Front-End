@@ -8,6 +8,7 @@ import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { AccountService } from '../account.service';
 import { Subscription } from 'rxjs';
+import { EncryptionService } from '../../../shared/encryptionService/encryption.service';
 
 @Component({
   selector: 'app-register',
@@ -34,7 +35,8 @@ export class RegistrationComponent implements OnDestroy {
     private http: HttpClient,
     private router: Router,
     private accountService: AccountService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private encryptionService: EncryptionService
   ) {
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
       this.isLoading = isLoading;
@@ -64,6 +66,9 @@ export class RegistrationComponent implements OnDestroy {
       });
       return;
     }
+
+    this.registerFormDto.ClientPassword = this.encryptionService.encrypt(this.registerFormDto.ClientPassword);
+
     this.loaderService.setLoading(true);
     this.accountService.registerClient(this.registerFormDto).subscribe(
       (response: any) => {
