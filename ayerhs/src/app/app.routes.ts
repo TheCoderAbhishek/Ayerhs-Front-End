@@ -6,6 +6,7 @@ import { DashboardComponent } from './component/layout/dashboard/dashboard.compo
 import { OtpVerificationComponent } from './component/account/otp-verification/otp-verification.component';
 import { ActivateAccountComponent } from './component/account/activate-account/activate-account.component';
 import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
+import { PasswordResetComponent } from './component/account/password-reset/password-reset.component';
 
 export const routes: Routes = [
   {
@@ -32,6 +33,10 @@ export const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent
+  },
+  {
+    path: 'password-reset',
+    component: PasswordResetComponent
   },
   {
     path: '',

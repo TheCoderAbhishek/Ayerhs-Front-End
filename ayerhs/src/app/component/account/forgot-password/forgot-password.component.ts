@@ -7,6 +7,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { Subscription } from 'rxjs';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -24,7 +25,8 @@ export class ForgotPasswordComponent implements OnDestroy {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private accountService: AccountService
   ) {
     this.inForgotPasswordDto = new InForgotPasswordDto();
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
@@ -51,11 +53,8 @@ export class ForgotPasswordComponent implements OnDestroy {
       return;
     }
     this.loaderService.setLoading(true);
-    this.http
-      .post(
-        'https://localhost:44302/ayerhs-security/Account/RequestPasswordReset',
-        this.inForgotPasswordDto
-      )
+    this.accountService
+    .generateOtp(this.inForgotPasswordDto.Email, 2)
       .subscribe((response: any) => {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
