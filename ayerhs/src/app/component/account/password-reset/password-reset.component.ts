@@ -7,6 +7,8 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { LoaderService } from '../../layout/loader/loader.service';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { Subscription } from 'rxjs';
+import { EncryptionService } from '../../../shared/encryptionService/encryption.service';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-password-reset',
@@ -28,7 +30,9 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private encryptionService: EncryptionService,
+    private accountService: AccountService
   ) {
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
       this.isLoading = isLoading;
@@ -63,13 +67,10 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
     const resetPasswordDto = {
       ClientEmail: this.email,
       Otp: this.otp,
-      ClientPassword: this.password,
+      ClientPassword: this.encryptionService.encrypt(this.password),
     };
-    this.http
-      .post(
-        'https://localhost:44302/ayerhs-security/Account/ForgotClientPassword',
-        resetPasswordDto
-      )
+    this.accountService
+    .forgotPassword(resetPasswordDto)
       .subscribe(
         (response: any) => {
           this.loaderService.setLoading(false);

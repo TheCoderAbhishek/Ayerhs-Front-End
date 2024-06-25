@@ -28,4 +28,8 @@ export class AccountService {
   verifyOtp(otpData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/OtpVerification`, otpData);
   }
+
+  forgotPassword(forgotPasswordData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/ForgotClientPassword`, forgotPasswordData);
+  }
 }
