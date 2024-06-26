@@ -17,6 +17,7 @@ export class PartitionsComponent {
   partitions: any[] = [];
   isLoading = false;
   private subscription: Subscription;
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(
     private http: HttpClient,
@@ -66,6 +67,22 @@ export class PartitionsComponent {
       this.loaderService.setLoading(false);
     }
   }
+
+  sortPartitions(): void {
+    this.partitions.sort((a, b) => {
+      if (this.sortDirection === 'asc') {
+        return a.partitionName.localeCompare(b.partitionName);
+      } else {
+        return b.partitionName.localeCompare(a.partitionName);
+      }
+    });
+  }
+
+  toggleSortDirection(): void {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.sortPartitions();
+  }
+
   convertUTCToIST(): void {
     this.partitions.forEach((partition) => {
       const utcDate = new Date(partition.partitionCreatedOn);
