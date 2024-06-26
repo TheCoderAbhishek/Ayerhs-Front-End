@@ -3,7 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { LoaderService } from '../../layout/loader/loader.service';
-import { Subscription } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  Subscription,
+  debounceTime,
+  distinctUntilChanged,
+  of,
+  switchMap,
+} from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -15,9 +23,11 @@ import { NavigationEnd, Router } from '@angular/router';
 })
 export class PartitionsComponent {
   partitions: any[] = [];
+  filteredPartitions: any[] = [];
   isLoading = false;
   private subscription: Subscription;
   sortDirection: 'asc' | 'desc' = 'asc';
+  private searchTerms = new Subject<string>();
 
   constructor(
     private http: HttpClient,
@@ -36,6 +46,7 @@ export class PartitionsComponent {
 
   ngOnInit(): void {
     this.fetchPartitions();
+    this.setupSearchSubscription();
   }
 
   fetchPartitions(): void {
@@ -53,6 +64,7 @@ export class PartitionsComponent {
           (response) => {
             if (response && response.returnValue) {
               this.partitions = response.returnValue;
+              this.filteredPartitions = [...this.partitions];
             } else {
               console.error('Invalid response structure', response);
             }
@@ -66,6 +78,43 @@ export class PartitionsComponent {
     } else {
       this.loaderService.setLoading(false);
     }
+  }
+
+  private setupSearchSubscription(): void {
+    this.searchTerms
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term: string) => {
+          this.loaderService.setLoading(true);
+          return this.filterPartitions(term);
+        })
+      )
+      .subscribe((filteredPartitions) => {
+        this.filteredPartitions = filteredPartitions;
+        this.loaderService.setLoading(false);
+      });
+  }
+
+  // Handle input change event and push search term to the observable stream
+  onSearchInputChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const searchTerm = inputElement.value.trim().toLowerCase();
+  
+    if (searchTerm !== '') {
+      this.searchTerms.next(searchTerm);
+    } else {
+      this.filteredPartitions = [...this.partitions];
+    }
+  }
+
+  // Filter partitions based on search term
+  private filterPartitions(term: string): Observable<any[]> {
+    return of(
+      this.partitions.filter((partition) =>
+        partition.partitionName.toLowerCase().includes(term)
+      )
+    );
   }
 
   sortPartitions(): void {
