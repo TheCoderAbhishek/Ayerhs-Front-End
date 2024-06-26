@@ -44,10 +44,10 @@
             {{ partition.partitionName }}
           </th>
           <td class="px-6 py-4">
-            {{ partition.partitionCreatedOn }}
+            {{ partition.partitionCreatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'UTC' }} IST
           </td>
           <td class="px-6 py-4">
-            {{ partition.partitionUpdatedOn }}
+            {{ partition.partitionUpdatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'UTC' }} IST
           </td>
           <td class="px-6 py-4 text-left">
             <a
