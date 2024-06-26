@@ -2,58 +2,63 @@
   class="relative overflow-x-auto shadow-md sm:rounded-lg"
   *ngIf="!isLoading"
 >
-  <table
-    class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
-  >
-    <thead
-      class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+  <div class="max-w-full overflow-hidden">
+    <h1 class="text-3xl text-gray-900 dark:text-gray-900 p-3">
+      Partitions
+    </h1>
+    <table
+      class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
     >
-      <tr>
-        <th scope="col" class="px-6 py-3">Sr No</th>
-        <th scope="col" class="px-6 py-3">
-          Partition Name
-          <a href="#">
-            <i class="fas fa-sort ms-1.5"></i>
-          </a>
-        </th>
-        <th scope="col" class="px-6 py-3">
-          <div class="flex items-center">Created On</div>
-        </th>
-        <th scope="col" class="px-6 py-3">
-          <div class="flex items-center">Updated On</div>
-        </th>
-        <th scope="col" class="px-6 py-3">
-          <div class="flex items-center">Action</div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        class="bg-white border-b dark:bg-gray-900 dark:border-gray-800"
-        *ngFor="let partition of partitions; let i = index"
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
       >
-        <td class="px-6 py-4">{{ i + 1 }}</td>
-        <th
-          scope="row"
-          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+        <tr>
+          <th scope="col" class="px-6 py-3">Sr No</th>
+          <th scope="col" class="px-6 py-3">
+            Partition Name
+            <a href="#">
+              <i class="fas fa-sort ms-1.5"></i>
+            </a>
+          </th>
+          <th scope="col" class="px-6 py-3">
+            <div class="flex items-center">Created On</div>
+          </th>
+          <th scope="col" class="px-6 py-3">
+            <div class="flex items-center">Updated On</div>
+          </th>
+          <th scope="col" class="px-6 py-3">
+            <div class="flex items-center">Action</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class="bg-white border-b dark:bg-gray-900 dark:border-gray-800"
+          *ngFor="let partition of partitions; let i = index"
         >
-          {{ partition.partitionName }}
-        </th>
-        <td class="px-6 py-4">
-          {{ partition.partitionCreatedOn }}
-        </td>
-        <td class="px-6 py-4">
-          {{ partition.partitionUpdatedOn }}
-        </td>
-        <td class="px-6 py-4 text-left">
-          <a
-            href="#"
-            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >Edit</a
+          <td class="px-6 py-4">{{ i + 1 }}</td>
+          <th
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            {{ partition.partitionName }}
+          </th>
+          <td class="px-6 py-4">
+            {{ partition.partitionCreatedOn }}
+          </td>
+          <td class="px-6 py-4">
+            {{ partition.partitionUpdatedOn }}
+          </td>
+          <td class="px-6 py-4 text-left">
+            <a
+              href="#"
+              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >Edit</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 <app-loader *ngIf="isLoading"></app-loader>
