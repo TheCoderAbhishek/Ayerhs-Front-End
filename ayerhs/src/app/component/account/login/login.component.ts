@@ -78,6 +78,7 @@ export class LoginComponent {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
           alert(response.successMessage);
+          this.router.navigate(['/dashboard']);
         } else {
           alert(response.errorMessage);
         }
