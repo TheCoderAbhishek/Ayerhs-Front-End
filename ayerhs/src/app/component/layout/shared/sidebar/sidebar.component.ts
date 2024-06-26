@@ -6,8 +6,12 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
+  inboxDropdownOpen = false;
 
+  toggleInboxDropdown() {
+    this.inboxDropdownOpen = !this.inboxDropdownOpen;
+  }
 }
