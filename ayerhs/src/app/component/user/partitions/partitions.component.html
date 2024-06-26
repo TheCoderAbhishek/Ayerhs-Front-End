@@ -3,7 +3,7 @@
   *ngIf="!isLoading"
 >
   <div class="max-w-full overflow-hidden">
-    <h1 class="text-3xl text-gray-900 dark:text-gray-900 p-3">
+    <h1 class="text-2xl text-gray-900 dark:text-gray-900 p-3">
       Partitions
     </h1>
     <table
@@ -44,10 +44,10 @@
             {{ partition.partitionName }}
           </th>
           <td class="px-6 py-4">
-            {{ partition.partitionCreatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'UTC' }} IST
+            {{ partition.partitionCreatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'IST' }} IST
           </td>
           <td class="px-6 py-4">
-            {{ partition.partitionUpdatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'UTC' }} IST
+            {{ partition.partitionUpdatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'IST' }} IST
           </td>
           <td class="px-6 py-4 text-left">
             <a
