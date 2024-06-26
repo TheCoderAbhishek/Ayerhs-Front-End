@@ -3,9 +3,7 @@
   *ngIf="!isLoading"
 >
   <div class="max-w-full overflow-hidden">
-    <h1 class="text-2xl text-gray-900 dark:text-gray-900 p-3">
-      Partitions
-    </h1>
+    <h1 class="text-2xl text-gray-900 dark:text-gray-900 p-3">Partitions</h1>
     <table
       class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
     >
@@ -44,17 +42,32 @@
             {{ partition.partitionName }}
           </th>
           <td class="px-6 py-4">
-            {{ partition.partitionCreatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'IST' }} IST
+            {{
+              partition.partitionCreatedOn
+                | date : "dd/MM/yyyy HH:mm:ss" : "IST"
+            }}
+            IST
           </td>
           <td class="px-6 py-4">
-            {{ partition.partitionUpdatedOn | date: 'dd/MM/yyyy HH:mm:ss' : 'IST' }} IST
+            {{
+              partition.partitionUpdatedOn
+                | date : "dd/MM/yyyy HH:mm:ss" : "IST"
+            }}
+            IST
           </td>
           <td class="px-6 py-4 text-left">
             <a
               href="#"
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >Edit</a
             >
+              <i class="fas fa-edit"></i>
+            </a>
+            <a
+              href="#"
+              class="font-medium text-red-600 dark:text-red-500 hover:underline ml-2"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </a>
           </td>
         </tr>
       </tbody>
