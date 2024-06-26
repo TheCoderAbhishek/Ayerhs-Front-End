@@ -10,22 +10,17 @@
     >
       <tr>
         <th scope="col" class="px-6 py-3">Sr No</th>
-        <th scope="col" class="px-6 py-3">Partition Name</th>
         <th scope="col" class="px-6 py-3">
-          <div class="flex items-center">
-            Created On
-            <a href="#">
-              <i class="fas fa-sort ms-1.5"></i>
-            </a>
-          </div>
+          Partition Name
+          <a href="#">
+            <i class="fas fa-sort ms-1.5"></i>
+          </a>
         </th>
         <th scope="col" class="px-6 py-3">
-          <div class="flex items-center">
-            Updated On
-            <a href="#">
-              <i class="fas fa-sort ms-1.5"></i>
-            </a>
-          </div>
+          <div class="flex items-center">Created On</div>
+        </th>
+        <th scope="col" class="px-6 py-3">
+          <div class="flex items-center">Updated On</div>
         </th>
         <th scope="col" class="px-6 py-3">
           <div class="flex items-center">Action</div>
@@ -34,7 +29,7 @@
     </thead>
     <tbody>
       <tr
-        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+        class="bg-white border-b dark:bg-gray-900 dark:border-gray-800"
         *ngFor="let partition of partitions; let i = index"
       >
         <td class="px-6 py-4">{{ i + 1 }}</td>
