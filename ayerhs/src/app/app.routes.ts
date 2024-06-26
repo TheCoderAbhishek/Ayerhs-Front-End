@@ -7,6 +7,7 @@ import { OtpVerificationComponent } from './component/account/otp-verification/o
 import { ActivateAccountComponent } from './component/account/activate-account/activate-account.component';
 import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
 import { PasswordResetComponent } from './component/account/password-reset/password-reset.component';
+import { PartitionsComponent } from './component/user/partitions/partitions.component';
 
 export const routes: Routes = [
   {
@@ -45,6 +46,10 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+      },
+      {
+        path: 'user/partitions',
+        component: PartitionsComponent,
       },
     ],
   },

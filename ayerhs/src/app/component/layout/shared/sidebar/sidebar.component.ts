@@ -23,4 +23,8 @@ export class SidebarComponent {
   navigateDashboard(){
     this.router.navigate(['/dashboard']);
   }
+
+  navigateToPartitions(){
+    this.router.navigate(['/user/partitions']);
+  }
 }
