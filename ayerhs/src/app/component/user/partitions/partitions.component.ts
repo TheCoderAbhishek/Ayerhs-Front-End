@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { LoaderService } from '../../layout/loader/loader.service';
+import { Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-partitions',
@@ -14,8 +16,18 @@ import { LoaderService } from '../../layout/loader/loader.service';
 export class PartitionsComponent {
   partitions: any[] = [];
   isLoading = false;
+  private subscription: Subscription;
 
-  constructor(private http: HttpClient, private loaderService: LoaderService) {}
+  constructor(private http: HttpClient, private loaderService: LoaderService, private router: Router,) {
+    this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
+      this.isLoading = isLoading;
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loaderService.setLoading(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.fetchPartitions();
