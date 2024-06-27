@@ -36,6 +36,8 @@ export class PartitionsComponent {
   isAddPartitionModalVisible = false;
   newPartitionName = '';
   partitionNameError: string | null = null;
+  isDeletePartitionVisible = false;
+  currentPartitionIdToDelete = 0;
 
   constructor(
     private http: HttpClient,
@@ -195,10 +197,9 @@ export class PartitionsComponent {
           this.hideAddPartitionModal();
           this.loaderService.setLoading(false);
           this.fetchPartitions();
-          if (response.status === 'Success'){
+          if (response.status === 'Success') {
             this.successMessage = response.successMessage;
-          }
-          else{
+          } else {
             this.errorMessage = response.errorMessage;
           }
         },
@@ -208,5 +209,35 @@ export class PartitionsComponent {
         }
       );
     }
+  }
+
+  showDeletePartitionConfirmationModal(partitionId: number) {
+    this.currentPartitionIdToDelete = partitionId;
+    this.isDeletePartitionVisible = true;
+  }
+
+  hideDeletePartitionConfirmationModal() {
+    this.currentPartitionIdToDelete = 0;
+    this.isDeletePartitionVisible = false;
+  }
+
+  deletePartition(partitionId: number): void {
+    this.loaderService.setLoading(true);
+    this.userService.deletePartition(partitionId).subscribe(
+      (response) => {
+        this.loaderService.setLoading(false);
+        this.fetchPartitions();
+        if (response.status === 'Success') {
+          this.successMessage = response.successMessage;
+        } else {
+          this.errorMessage = response.errorMessage;
+        }
+        this.hideDeletePartitionConfirmationModal();
+      },
+      (error) => {
+        console.error('Error deleting partition:', error);
+        this.loaderService.setLoading(false);
+      }
+    );
   }
 }
