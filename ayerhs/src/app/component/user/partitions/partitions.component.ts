@@ -168,6 +168,7 @@ export class PartitionsComponent {
   hideAddPartitionModal(): void {
     this.isAddPartitionModalVisible = false;
     this.isConfirmationModalVisible = false;
+    this.partitionNameError = null;
     this.router.navigate(['/user/partitions']);
   }
 
@@ -184,6 +185,7 @@ export class PartitionsComponent {
   }
 
   addPartition(): void {
+    this.validatePartitionName();
     if (this.partitionNameError === null) {
       console.log('Partition Added:', this.newPartitionName);
       this.hideAddPartitionModal();

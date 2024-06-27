@@ -192,7 +192,7 @@
                   id="newPartitionName"
                   (input)="validatePartitionName()"
                 />
-                <div *ngIf="partitionNameError" class="text-red-600 mt-2">
+                <div *ngIf="partitionNameError" class="text-red-600 mt-2 text-xs pl-2">
                   {{ partitionNameError }}
                 </div>
               </div>
@@ -204,7 +204,6 @@
             type="button"
             class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
             (click)="addPartition()"
-            [disabled]="partitionNameError !== null"
           >
             Add Partition
           </button>
