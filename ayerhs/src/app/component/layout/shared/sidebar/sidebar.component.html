@@ -1,9 +1,23 @@
 <aside
   id="sidebar-multi-level-sidebar"
   class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+  [class.transform-none]="sidebarOpen"
   aria-label="Sidebar"
 >
+  <!-- Hamburger icon for mobile -->
+  <div class="sm:hidden">
+    <button
+      type="button"
+      class="fixed top-0 left-0 z-50 flex items-center justify-center w-12 h-12 mt-4 ml-4 text-gray-900 transition duration-75 bg-gray-100 rounded-lg hover:bg-gray-200"
+      (click)="toggleSidebar()"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Sidebar content -->
   <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+    <!-- Sidebar items -->
     <ul class="space-y-2 font-medium">
       <li>
         <a
@@ -42,8 +56,8 @@
               class="py-2 space-y-2"
             >
               <li>
-                <a
-                  href="#"
+                <button
+                  (click)="navigateToPartitions()"
                   class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-6 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                 >
                   <i
@@ -51,7 +65,7 @@
                     aria-hidden="true"
                   ></i>
                   Partitions List
-                </a>
+                </button>
               </li>
               <li>
                 <a
