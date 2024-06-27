@@ -77,7 +77,7 @@ export class LoginComponent {
       (response: any) => {
         this.loaderService.setLoading(false);
         if (response.response === 1) {
-          alert(response.successMessage);
+          localStorage.setItem('authToken', response.returnValue.token);
           this.router.navigate(['/dashboard']);
         } else {
           alert(response.errorMessage);
