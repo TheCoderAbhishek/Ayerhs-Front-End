@@ -12,10 +12,14 @@ export class ExportService {
 
   exportToPDF(headers: string[], data: any[], fileName: string): void {
     const doc = new jsPDF();
+    doc.text(`${fileName}`, 14, 16);
+    
     autoTable(doc, {
       head: [headers],
       body: data,
+      startY: 20,
     });
+    
     doc.save(`${fileName}.pdf`);
   }
 
