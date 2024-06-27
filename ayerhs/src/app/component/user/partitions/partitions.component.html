@@ -135,7 +135,7 @@
             <button
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               title="Edit Partition"
-              (click)="showConfirmationUpdatePartitionModal()"
+              (click)="showConfirmationUpdatePartitionModal(partition.id, partition.partitionName)"
             >
               <i class="fas fa-edit"></i>
             </button>
@@ -397,9 +397,9 @@
           <button
             type="button"
             class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-            (click)="addPartition()"
+            (click)="updatePartition()"
           >
-            Add Partition
+            Update Partition
           </button>
           <button
             type="button"

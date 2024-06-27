@@ -41,6 +41,7 @@ export class PartitionsComponent {
   currentPartitionIdToDelete = 0;
   isConfirmationUpdatePartitionModalVisible = false;
   isUpdatePartitionModalVisible = false;
+  currentPartitionIdToUpdate = 0;
 
   constructor(
     private http: HttpClient,
@@ -237,7 +238,12 @@ export class PartitionsComponent {
     }
   }
 
-  showConfirmationUpdatePartitionModal(): void {
+  showConfirmationUpdatePartitionModal(
+    partitionId: number,
+    partitionName: string
+  ): void {
+    this.currentPartitionIdToUpdate = partitionId;
+    this.newPartitionName = partitionName;
     this.isConfirmationUpdatePartitionModalVisible = true;
   }
 
@@ -249,9 +255,41 @@ export class PartitionsComponent {
     this.isUpdatePartitionModalVisible = true;
   }
 
-  hideUpdatePartitionModal(){
+  hideUpdatePartitionModal() {
     this.isUpdatePartitionModalVisible = false;
     this.isConfirmationUpdatePartitionModalVisible = false;
+  }
+
+  updatePartition(): void {
+    this.validatePartitionName();
+    if (this.partitionNameError === null) {
+      const updatedPartition = {
+        id: this.currentPartitionIdToUpdate,
+        partitionName: this.newPartitionName
+      };
+      this.loaderService.setLoading(true);
+
+      this.userService.updatePartition(updatedPartition).subscribe(
+        (response) => {
+          this.hideUpdatePartitionModal();
+          this.loaderService.setLoading(false);
+          this.fetchPartitions();
+          if (response.status === 'Success') {
+            this.successMessage = response.successMessage;
+          } else {
+            this.errorMessage = response.errorMessage;
+          }
+        },
+        (error) => {
+          console.error('Error updating partition:', error);
+          this.loaderService.setLoading(false);
+        }
+      );
+
+      this.hideUpdatePartitionModal();
+    } else {
+      console.error('Invalid Partition Name Provided.');
+    }
   }
 
   showDeletePartitionConfirmationModal(partitionId: number) {
