@@ -24,6 +24,8 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./partitions.component.css'],
 })
 export class PartitionsComponent {
+  successMessage = '';
+  errorMessage = '';
   partitions: any[] = [];
   filteredPartitions: any[] = [];
   isLoading = false;
@@ -187,8 +189,24 @@ export class PartitionsComponent {
   addPartition(): void {
     this.validatePartitionName();
     if (this.partitionNameError === null) {
-      console.log('Partition Added:', this.newPartitionName);
-      this.hideAddPartitionModal();
+      this.loaderService.setLoading(true);
+      this.userService.addPartition(this.newPartitionName).subscribe(
+        (response) => {
+          this.hideAddPartitionModal();
+          this.loaderService.setLoading(false);
+          this.fetchPartitions();
+          if (response.status === 'Success'){
+            this.successMessage = response.successMessage;
+          }
+          else{
+            this.errorMessage = response.errorMessage;
+          }
+        },
+        (error) => {
+          console.error('Error adding partition:', error);
+          this.loaderService.setLoading(false);
+        }
+      );
     }
   }
 }

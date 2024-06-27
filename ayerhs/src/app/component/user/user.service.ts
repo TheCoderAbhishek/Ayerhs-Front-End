@@ -6,7 +6,8 @@ import { Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private baseUrl: string = 'https://localhost:44302/ayerhs-security/UserManagement';
+  private baseUrl: string =
+    'https://localhost:44302/ayerhs-security/UserManagement';
 
   constructor(private http: HttpClient) {}
 
@@ -14,10 +15,25 @@ export class UserService {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('authToken');
       return this.http.get(`${this.baseUrl}/GetPartitions`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
     } else {
-      return throwError('localStorage unavailable');
+      return throwError('Token unavailable');
+    }
+  }
+
+  addPartition(partitionName: string): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.post(
+        `${this.baseUrl}/AddPartition/${partitionName}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } else {
+      return throwError('Token unavailable');
     }
   }
 }
