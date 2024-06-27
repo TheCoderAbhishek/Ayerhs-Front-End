@@ -8,10 +8,20 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, SidebarComponent, FooterComponent, RouterModule],
+  imports: [
+    CommonModule,
+    NavbarComponent,
+    SidebarComponent,
+    FooterComponent,
+    RouterModule,
+  ],
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+  styleUrls: ['./layout.component.css'],
 })
 export class LayoutComponent {
+  sidebarOpen = false;
 
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
 }

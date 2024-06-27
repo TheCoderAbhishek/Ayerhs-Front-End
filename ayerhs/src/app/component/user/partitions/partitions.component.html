@@ -49,26 +49,28 @@
           (input)="onSearchInputChange($event)"
         />
       </div>
-      <button
-        class="ml-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        (click)="showConfirmationModal()"
-      >
-        Add Partition
-      </button>
-      <button
-        class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        (click)="exportPDF()"
-      >
-        <i class="fa-solid fa-file-pdf mr-2"></i>
-        Export PDF
-      </button>
-      <button
-        class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-        (click)="exportExcel()"
-      >
-        <i class="fa-solid fa-file-excel mr-2"></i>
-        Export Excel
-      </button>
+      <div class="flex space-x-2 sm:space-x-2 sm:flex-1 sm:justify-end">
+        <button
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          (click)="showConfirmationModal()"
+        >
+          Add Partition
+        </button>
+        <button
+          class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          (click)="exportPDF()"
+        >
+          <i class="fa-solid fa-file-pdf mr-2"></i>
+          Export PDF
+        </button>
+        <button
+          class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          (click)="exportExcel()"
+        >
+          <i class="fa-solid fa-file-excel mr-2"></i>
+          Export Excel
+        </button>
+      </div>
     </div>
     <table
       class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -135,7 +137,12 @@
             <button
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               title="Edit Partition"
-              (click)="showConfirmationUpdatePartitionModal(partition.id, partition.partitionName)"
+              (click)="
+                showConfirmationUpdatePartitionModal(
+                  partition.id,
+                  partition.partitionName
+                )
+              "
             >
               <i class="fas fa-edit"></i>
             </button>

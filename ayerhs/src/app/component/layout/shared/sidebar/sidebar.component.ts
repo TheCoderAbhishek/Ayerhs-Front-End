@@ -11,20 +11,23 @@ import { Router } from '@angular/router';
 })
 export class SidebarComponent {
   userManagementDropdownOpen = false;
+  sidebarOpen = false;
 
-  constructor(
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
 
   toggleUserManagementDropdown() {
     this.userManagementDropdownOpen = !this.userManagementDropdownOpen;
   }
 
-  navigateDashboard(){
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  navigateDashboard() {
     this.router.navigate(['/dashboard']);
   }
 
-  navigateToPartitions(){
+  navigateToPartitions() {
     this.router.navigate(['/user/partitions']);
   }
 }
