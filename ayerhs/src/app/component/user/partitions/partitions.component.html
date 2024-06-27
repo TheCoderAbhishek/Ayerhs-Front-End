@@ -65,6 +65,9 @@
         </tr>
       </thead>
       <tbody>
+        <tr *ngIf="filteredPartitions.length === 0">
+          <td colspan="5" class="bg-white border-b dark:bg-gray-900 dark:border-gray-800 px-6 py-4 text-center">No data available</td>
+        </tr>
         <tr
           class="bg-white border-b dark:bg-gray-900 dark:border-gray-800"
           *ngFor="let partition of filteredPartitions; let i = index"
