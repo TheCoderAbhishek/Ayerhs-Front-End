@@ -13,6 +13,7 @@ import {
   switchMap,
 } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-partitions',
@@ -32,7 +33,8 @@ export class PartitionsComponent {
   constructor(
     private http: HttpClient,
     private loaderService: LoaderService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
       this.isLoading = isLoading;
@@ -53,13 +55,7 @@ export class PartitionsComponent {
     if (typeof localStorage !== 'undefined') {
       this.loaderService.setLoading(true);
       const token = localStorage.getItem('authToken');
-      this.http
-        .get<any>(
-          'https://localhost:44302/ayerhs-security/UserManagement/GetPartitions',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
+      this.userService.getPartitions()
         .subscribe(
           (response) => {
             if (response && response.returnValue) {
@@ -100,7 +96,7 @@ export class PartitionsComponent {
   onSearchInputChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const searchTerm = inputElement.value.trim().toLowerCase();
-  
+
     if (searchTerm !== '') {
       this.searchTerms.next(searchTerm);
     } else {
@@ -118,7 +114,7 @@ export class PartitionsComponent {
   }
 
   sortPartitions(): void {
-    this.partitions.sort((a, b) => {
+    this.filteredPartitions.sort((a, b) => {
       if (this.sortDirection === 'asc') {
         return a.partitionName.localeCompare(b.partitionName);
       } else {
