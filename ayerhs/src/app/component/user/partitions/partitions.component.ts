@@ -39,6 +39,7 @@ export class PartitionsComponent {
   partitionNameError: string | null = null;
   isDeletePartitionVisible = false;
   currentPartitionIdToDelete = 0;
+  isConfirmationUpdatePartitionModalVisible = false;
   isUpdatePartitionModalVisible = false;
 
   constructor(
@@ -236,12 +237,21 @@ export class PartitionsComponent {
     }
   }
 
-  showUpdatePartitionModal(): void {
+  showConfirmationUpdatePartitionModal(): void {
+    this.isConfirmationUpdatePartitionModalVisible = true;
+  }
+
+  hideConfirmationUpdatePartitionModal(): void {
+    this.isConfirmationUpdatePartitionModalVisible = false;
+  }
+
+  showUpdatePartitionModal() {
     this.isUpdatePartitionModalVisible = true;
   }
 
-  hideUpdatePartitionModal(): void {
+  hideUpdatePartitionModal(){
     this.isUpdatePartitionModalVisible = false;
+    this.isConfirmationUpdatePartitionModalVisible = false;
   }
 
   showDeletePartitionConfirmationModal(partitionId: number) {
