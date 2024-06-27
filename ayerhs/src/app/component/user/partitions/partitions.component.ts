@@ -15,6 +15,7 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { FormsModule } from '@angular/forms';
+import { ExportService } from '../../../shared/exportService/export.service';
 
 @Component({
   selector: 'app-partitions',
@@ -43,7 +44,8 @@ export class PartitionsComponent {
     private http: HttpClient,
     private loaderService: LoaderService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private exportService: ExportService
   ) {
     this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
       this.isLoading = isLoading;
@@ -82,6 +84,28 @@ export class PartitionsComponent {
     } else {
       this.loaderService.setLoading(false);
     }
+  }
+
+  exportPDF(): void {
+    const headers = ['Sr No', 'Partition Name', 'Created On', 'Updated On'];
+    const data = this.partitions.map((partition, index) => [
+      index + 1,
+      partition.partitionName,
+      new Date(partition.partitionCreatedOn).toLocaleString(),
+      new Date(partition.partitionUpdatedOn).toLocaleString(),
+    ]);
+    this.exportService.exportToPDF(headers, data, 'Partitions');
+  }
+
+  exportExcel(): void {
+    const headers = ['Sr No', 'Partition Name', 'Created On', 'Updated On'];
+    const data = this.partitions.map((partition, index) => [
+      index + 1,
+      partition.partitionName,
+      new Date(partition.partitionCreatedOn).toLocaleString(),
+      new Date(partition.partitionUpdatedOn).toLocaleString(),
+    ]);
+    this.exportService.exportToExcel(headers, data, 'Partitions');
   }
 
   private setupSearchSubscription(): void {
