@@ -39,6 +39,7 @@ export class PartitionsComponent {
   partitionNameError: string | null = null;
   isDeletePartitionVisible = false;
   currentPartitionIdToDelete = 0;
+  isUpdatePartitionModalVisible = false;
 
   constructor(
     private http: HttpClient,
@@ -233,6 +234,14 @@ export class PartitionsComponent {
         }
       );
     }
+  }
+
+  showUpdatePartitionModal(): void {
+    this.isUpdatePartitionModalVisible = true;
+  }
+
+  hideUpdatePartitionModal(): void {
+    this.isUpdatePartitionModalVisible = false;
   }
 
   showDeletePartitionConfirmationModal(partitionId: number) {
