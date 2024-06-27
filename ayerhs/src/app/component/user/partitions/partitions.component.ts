@@ -14,11 +14,12 @@ import {
 } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { UserService } from '../user.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-partitions',
   standalone: true,
-  imports: [NgIf, NgFor, LoaderComponent, CommonModule],
+  imports: [NgIf, NgFor, LoaderComponent, CommonModule, FormsModule],
   templateUrl: './partitions.component.html',
   styleUrls: ['./partitions.component.css'],
 })
@@ -29,6 +30,10 @@ export class PartitionsComponent {
   private subscription: Subscription;
   sortDirection: 'asc' | 'desc' = 'asc';
   private searchTerms = new Subject<string>();
+  isConfirmationModalVisible = false;
+  isAddPartitionModalVisible = false;
+  newPartitionName = '';
+  partitionNameError: string | null = null;
 
   constructor(
     private http: HttpClient,
@@ -55,22 +60,21 @@ export class PartitionsComponent {
     if (typeof localStorage !== 'undefined') {
       this.loaderService.setLoading(true);
       const token = localStorage.getItem('authToken');
-      this.userService.getPartitions()
-        .subscribe(
-          (response) => {
-            if (response && response.returnValue) {
-              this.partitions = response.returnValue;
-              this.filteredPartitions = [...this.partitions];
-            } else {
-              console.error('Invalid response structure', response);
-            }
-            this.loaderService.setLoading(false);
-          },
-          (error) => {
-            console.error('Error fetching partitions data', error);
-            this.loaderService.setLoading(false);
+      this.userService.getPartitions().subscribe(
+        (response) => {
+          if (response && response.returnValue) {
+            this.partitions = response.returnValue;
+            this.filteredPartitions = [...this.partitions];
+          } else {
+            console.error('Invalid response structure', response);
           }
-        );
+          this.loaderService.setLoading(false);
+        },
+        (error) => {
+          console.error('Error fetching partitions data', error);
+          this.loaderService.setLoading(false);
+        }
+      );
     } else {
       this.loaderService.setLoading(false);
     }
@@ -145,5 +149,44 @@ export class PartitionsComponent {
       timeZone: 'Asia/Kolkata',
       hour12: false,
     });
+  }
+
+  showConfirmationModal(): void {
+    this.isConfirmationModalVisible = true;
+  }
+
+  hideConfirmationModal(): void {
+    this.isConfirmationModalVisible = false;
+  }
+
+  showAddPartitionModal(): void {
+    this.isAddPartitionModalVisible = true;
+    this.newPartitionName = '';
+    this.partitionNameError = null;
+  }
+
+  hideAddPartitionModal(): void {
+    this.isAddPartitionModalVisible = false;
+    this.isConfirmationModalVisible = false;
+    this.router.navigate(['/user/partitions']);
+  }
+
+  validatePartitionName(): void {
+    const regex = /^[a-zA-Z0-9]+$/;
+    if (!this.newPartitionName) {
+      this.partitionNameError = 'Partition Name cannot be empty';
+    } else if (!regex.test(this.newPartitionName)) {
+      this.partitionNameError =
+        'Only contains letters and numbers. Special characters and spaces are not allowed';
+    } else {
+      this.partitionNameError = null;
+    }
+  }
+
+  addPartition(): void {
+    if (this.partitionNameError === null) {
+      console.log('Partition Added:', this.newPartitionName);
+      this.hideAddPartitionModal();
+    }
   }
 }
