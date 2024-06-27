@@ -240,4 +240,9 @@ export class PartitionsComponent {
       }
     );
   }
+
+  hideAlert() {
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
 }

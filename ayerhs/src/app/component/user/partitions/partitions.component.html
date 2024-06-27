@@ -10,8 +10,8 @@
     >
       <i class="fas fa-check-circle mr-2"></i>
       {{ successMessage }}
-      <button type="button" class="close ml-auto" aria-label="Close">
-        <i class="fa-solid fa-circle-xmark"></i>
+      <button type="button" class="close ml-auto" aria-label="Close" (click)="hideAlert()">
+        <i class="fa-regular fa-circle-xmark"></i>
       </button>
     </div>
 
@@ -22,8 +22,8 @@
     >
       <i class="fas fa-exclamation-circle mr-2"></i>
       {{ errorMessage }}
-      <button type="button" class="close ml-auto" aria-label="Close">
-        <i class="fa-solid fa-circle-xmark"></i>
+      <button type="button" class="close ml-auto" aria-label="Close" (click)="hideAlert()">
+        <i class="fa-regular fa-circle-xmark"></i>
       </button>
     </div>
   </div>
