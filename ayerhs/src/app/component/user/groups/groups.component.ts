@@ -108,10 +108,26 @@ export class GroupsComponent implements OnInit {
   }
 
   exportPDF() {
-    // Implement export PDF logic here
+    const headers = ['Sr No', 'Group Name', 'Partition Name', 'Created On', 'Updated On'];
+    const data = this.groups.map((group, index) => [
+      index + 1,
+      group.groupName,
+      group.partition.partitionName,
+      new Date(group.groupCreatedOn).toLocaleString(),
+      new Date(group.groupUpdatedOn).toLocaleString(),
+    ]);
+    this.exportService.exportToPDF(headers, data, 'Groups');
   }
 
   exportExcel() {
-    // Implement export Excel logic here
+    const headers = ['Sr No', 'Group Name', 'Partition Name', 'Created On', 'Updated On'];
+    const data = this.groups.map((group, index) => [
+      index + 1,
+      group.groupName,
+      group.partition.partitionName,
+      new Date(group.groupCreatedOn).toLocaleString(),
+      new Date(group.groupUpdatedOn).toLocaleString(),
+    ]);
+    this.exportService.exportToExcel(headers, data, 'Groups');
   }
 }
