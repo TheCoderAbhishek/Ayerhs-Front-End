@@ -36,7 +36,6 @@ export class GroupsComponent implements OnInit {
       this.loaderService.setLoading(true);
       this.userService.getGroups(0).subscribe(
         (response) => {
-          console.log(response);
           if (response && response.returnValue) {
             this.groups = response.returnValue.$values;
             this.filteredGroups = [...this.groups];
