@@ -72,7 +72,7 @@ export class PartitionsComponent {
       this.userService.getPartitions().subscribe(
         (response) => {
           if (response && response.returnValue) {
-            this.partitions = response.returnValue;
+            this.partitions = response.returnValue.$values;
             this.filteredPartitions = [...this.partitions];
           } else {
             console.error('Invalid response structure', response);
