@@ -23,6 +23,7 @@ export class GroupsComponent implements OnInit {
   isAddGroupConfirmationModalVisible = false;
   isAddGroupModalVisible = false;
   newGroupName = '';
+  partitionError: string | null = null;
   groupNameError: string | null = null;
   addGroupPartitions: any[] = [];
   public selectedPartitionId: number | null = null;
@@ -31,7 +32,7 @@ export class GroupsComponent implements OnInit {
     private loaderService: LoaderService,
     private router: Router,
     private userService: UserService,
-    private exportService: ExportService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit(): void {
@@ -82,7 +83,7 @@ export class GroupsComponent implements OnInit {
   }
 
   convertToISTString(date: Date): string {
-    const istOffset = 5.5 * 60 * 60 * 1000; // IST offset UTC+5.5
+    const istOffset = 5.5 * 60 * 60 * 1000;
     const istDate = new Date(date.getTime() + istOffset);
     return istDate.toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata',
@@ -111,24 +112,32 @@ export class GroupsComponent implements OnInit {
   }
 
   showAddGroupModal(): void {
+    this.isAddGroupConfirmationModalVisible = false;
     this.loaderService.setLoading(true);
-    this.userService.getPartitions()
-    .subscribe(
-      (response) => {
-        if (response && response.returnValue) {
-          this.addGroupPartitions = response.returnValue.$values;
-        }
-        this.loaderService.setLoading(false);
+    this.userService.getPartitions().subscribe((response) => {
+      if (response && response.returnValue) {
+        this.addGroupPartitions = response.returnValue.$values;
       }
-    );
-    this.isAddGroupModalVisible = true;
+      this.loaderService.setLoading(false);
+      this.isAddGroupModalVisible = true;
+    });
   }
 
   hideAddGroupModal(): void {
     this.isAddGroupModalVisible = false;
     this.isAddGroupConfirmationModalVisible = false;
     this.groupNameError = null;
+    this.partitionError = null;
+    this.selectedPartitionId = null;
     this.router.navigate(['/user/groups']);
+  }
+
+  validatePartitionSelection(): void {
+    if (!this.selectedPartitionId) {
+      this.partitionError = 'Please select a partition.';
+    } else {
+      this.partitionError = null;
+    }
   }
 
   validateGroupName(): void {
@@ -143,8 +152,12 @@ export class GroupsComponent implements OnInit {
     }
   }
 
-  addPartition() {
-    // Implement add partition logic here
+  addGroup() {
+    this.validateGroupName();
+    this.validatePartitionSelection();
+    if (this.groupNameError === null && this.partitionError === null) {
+      this.loaderService.setLoading(true);
+    }
   }
 
   editPartition(id: number) {
