@@ -5,11 +5,12 @@ import { LoaderService } from '../../layout/loader/loader.service';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { ExportService } from '../../../shared/exportService/export.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-groups',
   standalone: true,
-  imports: [CommonModule, LoaderComponent, NgIf, NgFor],
+  imports: [CommonModule, LoaderComponent, NgIf, NgFor, FormsModule],
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.css'],
 })
@@ -19,12 +20,18 @@ export class GroupsComponent implements OnInit {
   errorMessage = '';
   groups: any[] = [];
   filteredGroups: any[] = [];
+  isAddGroupConfirmationModalVisible = false;
+  isAddGroupModalVisible = false;
+  newGroupName = '';
+  groupNameError: string | null = null;
+  addGroupPartitions: any[] = [];
+  public selectedPartitionId: number | null = null;
 
   constructor(
     private loaderService: LoaderService,
     private router: Router,
     private userService: UserService,
-    private exportService: ExportService
+    private exportService: ExportService,
   ) {}
 
   ngOnInit(): void {
@@ -95,6 +102,47 @@ export class GroupsComponent implements OnInit {
     this.errorMessage = '';
   }
 
+  showAddGroupConfirmationModal(): void {
+    this.isAddGroupConfirmationModalVisible = true;
+  }
+
+  hideAddGroupConfirmationModal(): void {
+    this.isAddGroupConfirmationModalVisible = false;
+  }
+
+  showAddGroupModal(): void {
+    this.loaderService.setLoading(true);
+    this.userService.getPartitions()
+    .subscribe(
+      (response) => {
+        if (response && response.returnValue) {
+          this.addGroupPartitions = response.returnValue.$values;
+        }
+        this.loaderService.setLoading(false);
+      }
+    );
+    this.isAddGroupModalVisible = true;
+  }
+
+  hideAddGroupModal(): void {
+    this.isAddGroupModalVisible = false;
+    this.isAddGroupConfirmationModalVisible = false;
+    this.groupNameError = null;
+    this.router.navigate(['/user/groups']);
+  }
+
+  validateGroupName(): void {
+    const regex = /^[a-zA-Z0-9]+$/;
+    if (!this.newGroupName) {
+      this.groupNameError = 'Group Name cannot be empty';
+    } else if (!regex.test(this.newGroupName)) {
+      this.groupNameError =
+        'Only contains letters and numbers. Special characters and spaces are not allowed';
+    } else {
+      this.groupNameError = null;
+    }
+  }
+
   addPartition() {
     // Implement add partition logic here
   }
@@ -108,7 +156,13 @@ export class GroupsComponent implements OnInit {
   }
 
   exportPDF() {
-    const headers = ['Sr No', 'Group Name', 'Partition Name', 'Created On', 'Updated On'];
+    const headers = [
+      'Sr No',
+      'Group Name',
+      'Partition Name',
+      'Created On',
+      'Updated On',
+    ];
     const data = this.groups.map((group, index) => [
       index + 1,
       group.groupName,
@@ -120,7 +174,13 @@ export class GroupsComponent implements OnInit {
   }
 
   exportExcel() {
-    const headers = ['Sr No', 'Group Name', 'Partition Name', 'Created On', 'Updated On'];
+    const headers = [
+      'Sr No',
+      'Group Name',
+      'Partition Name',
+      'Created On',
+      'Updated On',
+    ];
     const data = this.groups.map((group, index) => [
       index + 1,
       group.groupName,

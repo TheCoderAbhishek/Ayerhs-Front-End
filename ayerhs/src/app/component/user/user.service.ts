@@ -69,4 +69,15 @@ export class UserService {
       return throwError('Token unavailable');
     }
   }
+
+  addGroup(addGroupData: any): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.post(`${this.baseUrl}/AddGroup`, addGroupData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
+      return throwError('Token unavailable');
+    }
+  }
 }
