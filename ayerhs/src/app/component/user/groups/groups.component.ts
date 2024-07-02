@@ -25,6 +25,7 @@ export class GroupsComponent implements OnInit {
   groups: any[] = [];
   filteredGroups: any[] = [];
   isAddGroupConfirmationModalVisible = false;
+  isUpdateGroupConfirmationModalVisible = false;
   isAddGroupModalVisible = false;
   newGroupName = '';
   partitionError: string | null = null;
@@ -212,6 +213,14 @@ export class GroupsComponent implements OnInit {
     } else {
       console.error('Invalid Partition Name Selected or Group Name Provided.');
     }
+  }
+
+  showUpdateGroupConfirmationModal(): void {
+    this.isUpdateGroupConfirmationModalVisible = true;
+  }
+
+  hideUpdateGroupConfirmationModal(): void {
+    this.isUpdateGroupConfirmationModalVisible = false;
   }
 
   editPartition(id: number) {
