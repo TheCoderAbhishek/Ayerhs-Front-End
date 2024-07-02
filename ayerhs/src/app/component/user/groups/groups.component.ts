@@ -2,10 +2,11 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LoaderComponent } from '../../layout/loader/loader.component';
 import { LoaderService } from '../../layout/loader/loader.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { ExportService } from '../../../shared/exportService/export.service';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-groups',
@@ -15,6 +16,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./groups.component.css'],
 })
 export class GroupsComponent implements OnInit {
+  private subscription: Subscription;
   isLoading = false;
   successMessage = '';
   errorMessage = '';
@@ -33,7 +35,16 @@ export class GroupsComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private exportService: ExportService
-  ) {}
+  ) {
+    this.subscription = this.loaderService.isLoading$.subscribe((isLoading) => {
+      this.isLoading = isLoading;
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loaderService.setLoading(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.fetchGroups();
