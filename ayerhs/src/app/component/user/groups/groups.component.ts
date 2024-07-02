@@ -19,6 +19,7 @@ export class GroupsComponent implements OnInit {
   private subscription: Subscription;
   isLoading = false;
   sortDirection: 'asc' | 'desc' = 'asc';
+  currentSortField: 'groupName' | 'partitionName' = 'groupName';
   successMessage = '';
   errorMessage = '';
   groups: any[] = [];
@@ -257,17 +258,30 @@ export class GroupsComponent implements OnInit {
     this.exportService.exportToExcel(headers, data, 'Groups');
   }
 
-  toggleSortDirection(): void {
-    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  toggleSortDirection(field: 'groupName' | 'partitionName'): void {
+    if (this.currentSortField === field) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.currentSortField = field;
+      this.sortDirection = 'asc';
+    }
     this.sortGroups();
   }
 
   sortGroups(): void {
     this.filteredGroups.sort((a, b) => {
-      if (this.sortDirection === 'asc') {
-        return a.groupName.localeCompare(b.groupName);
+      let aField, bField;
+      if (this.currentSortField === 'groupName') {
+        aField = a.groupName;
+        bField = b.groupName;
       } else {
-        return b.groupName.localeCompare(a.groupName);
+        aField = a.partition.partitionName;
+        bField = b.partition.partitionName;
+      }
+      if (this.sortDirection === 'asc') {
+        return aField.localeCompare(bField);
+      } else {
+        return bField.localeCompare(aField);
       }
     });
   }
