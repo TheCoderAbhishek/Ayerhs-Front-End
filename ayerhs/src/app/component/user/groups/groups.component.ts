@@ -129,6 +129,7 @@ export class GroupsComponent implements OnInit {
     this.groupNameError = null;
     this.partitionError = null;
     this.selectedPartitionId = null;
+    this.newGroupName = '';
     this.router.navigate(['/user/groups']);
   }
 
@@ -157,6 +158,29 @@ export class GroupsComponent implements OnInit {
     this.validatePartitionSelection();
     if (this.groupNameError === null && this.partitionError === null) {
       this.loaderService.setLoading(true);
+      const inAddGroupDto = {
+        partitionId: this.selectedPartitionId,
+        groupName: this.newGroupName,
+      };
+      this.userService.addGroup(inAddGroupDto).subscribe(
+        (response) => {
+          this.hideAddGroupModal();
+          this.loaderService.setLoading(false);
+          this.fetchGroups();
+          if (response.status === 'Success') {
+            this.successMessage = response.successMessage;
+          } else {
+            this.errorMessage = response.errorMessage;
+          }
+        },
+        (error) => {
+          console.error('Error updating partition:', error);
+          this.loaderService.setLoading(false);
+        }
+      );
+      this.hideAddGroupModal();
+    } else {
+      console.error('Invalid Partition Name Selected or Group Name Provided.');
     }
   }
 
