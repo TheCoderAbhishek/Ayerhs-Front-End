@@ -164,6 +164,23 @@ export class GroupsComponent implements OnInit {
     }
   }
 
+  toggleGroupStatus(group: any) {
+    group.isActive = !group.isActive;
+    // Make an API call to update the group status on the server
+    // this.groupService.updateGroupStatus(group.id, group.isActive).subscribe(
+    //   (response) => {
+    //     this.successMessage = 'Group status updated successfully.';
+    //     this.errorMessage = '';
+    //   },
+    //   (error) => {
+    //     this.errorMessage = 'Failed to update group status.';
+    //     this.successMessage = '';
+    //     // Revert the change on error
+    //     group.isActive = !group.isActive;
+    //   }
+    // );
+  }
+
   addGroup() {
     this.validateGroupName();
     this.validatePartitionSelection();
