@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 export class GroupsComponent implements OnInit {
   private subscription: Subscription;
   isLoading = false;
+  sortDirection: 'asc' | 'desc' = 'asc';
   successMessage = '';
   errorMessage = '';
   groups: any[] = [];
@@ -254,5 +255,20 @@ export class GroupsComponent implements OnInit {
       new Date(group.groupUpdatedOn).toLocaleString(),
     ]);
     this.exportService.exportToExcel(headers, data, 'Groups');
+  }
+
+  toggleSortDirection(): void {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.sortGroups();
+  }
+
+  sortGroups(): void {
+    this.filteredGroups.sort((a, b) => {
+      if (this.sortDirection === 'asc') {
+        return a.groupName.localeCompare(b.groupName);
+      } else {
+        return b.groupName.localeCompare(a.groupName);
+      }
+    });
   }
 }
