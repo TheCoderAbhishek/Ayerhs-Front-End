@@ -6,7 +6,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { ExportService } from '../../../shared/exportService/export.service';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, partition } from 'rxjs';
 
 @Component({
   selector: 'app-groups',
@@ -27,11 +27,14 @@ export class GroupsComponent implements OnInit {
   isAddGroupConfirmationModalVisible = false;
   isUpdateGroupConfirmationModalVisible = false;
   isAddGroupModalVisible = false;
+  isUpdateGroupModalVisible = false;
   newGroupName = '';
   partitionError: string | null = null;
   groupNameError: string | null = null;
   addGroupPartitions: any[] = [];
   public selectedPartitionId: number | null = null;
+  currentGroupIdToUpdate = 0;
+  currentPartitionIdGroupPresent = 0;
 
   constructor(
     private loaderService: LoaderService,
@@ -215,7 +218,14 @@ export class GroupsComponent implements OnInit {
     }
   }
 
-  showUpdateGroupConfirmationModal(): void {
+  showUpdateGroupConfirmationModal(
+    groupId: number,
+    partitionId: number,
+    groupName: string
+  ): void {
+    this.currentGroupIdToUpdate = groupId;
+    this.currentPartitionIdGroupPresent = partitionId;
+    this.newGroupName = groupName;
     this.isUpdateGroupConfirmationModalVisible = true;
   }
 
@@ -223,8 +233,46 @@ export class GroupsComponent implements OnInit {
     this.isUpdateGroupConfirmationModalVisible = false;
   }
 
-  editPartition(id: number) {
-    // Implement edit partition logic here
+  showUpdateGroupModal(): void {
+    this.isUpdateGroupModalVisible = true;
+  }
+
+  hideUpdateGroupModal(): void {
+    this.isUpdateGroupModalVisible = false;
+    this.isUpdateGroupConfirmationModalVisible = false;
+    this.groupNameError = '';
+  }
+
+  updateGroup() {
+    this.validateGroupName();
+    if (this.groupNameError === null) {
+      const updateGroup = {
+        id: this.currentGroupIdToUpdate,
+        partitionId: this.currentPartitionIdGroupPresent,
+        newGroupName: this.newGroupName,
+      };
+      this.loaderService.setLoading(true);
+
+      this.userService.updateGroup(updateGroup)
+      .subscribe(
+        (response) => {
+          this.hideUpdateGroupModal();
+          this.loaderService.setLoading(false);
+          this.fetchGroups();
+          if (response.status === 'Success') {
+            this.successMessage = response.successMessage;
+          }
+          else {
+            this.errorMessage = response.errorMessage;
+          }
+        }, (error) => {
+          console.error('Error updating group:', error);
+          this.loaderService.setLoading(false);
+        }
+      )
+    } else {
+      console.error('Invalid Group Name Provided.');
+    }
   }
 
   deletePartition(id: number) {
