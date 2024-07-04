@@ -51,20 +51,20 @@
       <div class="flex space-x-2 sm:space-x-2 sm:flex-1 sm:justify-end">
         <button
           (click)="showAddGroupConfirmationModal()"
-          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
         >
           Add Group
         </button>
         <button
           (click)="exportPDF()"
-          class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md"
         >
           <i class="fa-solid fa-file-pdf mr-2"></i>
           Export PDF
         </button>
         <button
           (click)="exportExcel()"
-          class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
         >
           <i class="fa-solid fa-file-excel mr-2"></i>
           Export Excel
@@ -141,44 +141,62 @@
           </td>
           <td class="px-6 py-4 text-left">
             <button
-              (click)="showUpdateGroupConfirmationModal(group.id, group.partition.id, group.groupName)"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              (click)="
+                showUpdateGroupConfirmationModal(
+                  group.id,
+                  group.partition.id,
+                  group.groupName
+                )
+              "
+              class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
               title="Edit Group"
             >
               <i class="fas fa-edit"></i>
             </button>
             <button
-              class="ml-2"
-              title="Change Group Status"
-              (click)="toggleGroupStatus(group)"
+              class="text-white py-2 px-4 rounded ml-2"
+              [ngClass]="
+                group.isDeleted
+                  ? 'bg-green-500 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-700'
+              "
+              [title]="group.isActive? 'Deactivate Group' : 'Activate Group'"
             >
               <i
                 [ngClass]="
                   group.isActive
-                    ? 'fas fa-toggle-on text-green-500'
-                    : 'fas fa-toggle-off text-gray-500'
+                    ? 'fas fa-toggle-on'
+                    : 'fas fa-toggle-off'
                 "
                 class="text-md"
               ></i>
             </button>
             <button
-              class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
-              title="Change Group"
+              class="bg-yellow-500 hover:bg-yellow-700 text-white py-2 px-4 rounded ml-2"
+              title="Change Partition"
             >
               <i class="fa fa-exchange"></i>
             </button>
-            <button class="ml-2" title="Soft Delete Group">
+            <button
+              class="text-white py-2 px-4 rounded ml-2"
+              [ngClass]="
+                group.isDeleted
+                  ? 'bg-green-500 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-700'
+              "
+              [title]="group.isDeleted ? 'Restore Group' : 'Soft Delete Group'"
+            >
               <i
                 [ngClass]="
                   group.isDeleted
-                    ? 'fa-solid fa-trash-can-arrow-up text-green-500'
-                    : 'fa-solid fa-trash-can text-red-400'
+                    ? 'fas fa-trash-can-arrow-up'
+                    : 'fas fa-trash-can'
                 "
                 class="text-md"
               ></i>
             </button>
             <button
-              class="font-medium text-red-600 dark:text-red-500 hover:underline ml-2"
+              class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded ml-2"
               title="Permanent Delete Group"
             >
               <i class="fa-solid fa-ban"></i>
@@ -472,4 +490,3 @@
     </div>
   </div>
 </div>
-
