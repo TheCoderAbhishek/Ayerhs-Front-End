@@ -35,8 +35,9 @@ export class GroupsComponent implements OnInit {
   public selectedPartitionId: number | null = null;
   currentGroupIdToUpdate = 0;
   currentPartitionIdGroupPresent = 0;
-  isSoftDeletePartitionVisible = false;
+  isSoftDeleteGroupVisible = false;
   currentGroupIdToSoftDeleteRecoverHardDelete = 0;
+  isRecoverDeletedGroupVisible = false;
 
   constructor(
     private loaderService: LoaderService,
@@ -262,12 +263,12 @@ export class GroupsComponent implements OnInit {
 
   showSoftDeleteGroupConfirmationModal(groupId: number) {
     this.currentGroupIdToSoftDeleteRecoverHardDelete = groupId;
-    this.isSoftDeletePartitionVisible = true;
+    this.isSoftDeleteGroupVisible = true;
   }
 
   hideSoftDeleteGroupConfirmationModal() {
     this.currentGroupIdToSoftDeleteRecoverHardDelete = 0;
-    this.isSoftDeletePartitionVisible = false;
+    this.isSoftDeleteGroupVisible = false;
   }
 
   softDeletePartition(groupId: number): void {
@@ -283,6 +284,37 @@ export class GroupsComponent implements OnInit {
           this.errorMessage = response.errorMessage;
         }
         this.hideSoftDeleteGroupConfirmationModal();
+      },
+      (error) => {
+        console.error('Error deleting partition:', error);
+        this.loaderService.setLoading(false);
+      }
+    );
+  }
+
+  showRecoverGroupConfirmationModal(groupId: number) {
+    this.currentGroupIdToSoftDeleteRecoverHardDelete = groupId;
+    this.isRecoverDeletedGroupVisible = true;
+  }
+
+  hideRecoverGroupConfirmationModal() {
+    this.currentGroupIdToSoftDeleteRecoverHardDelete = 0;
+    this.isRecoverDeletedGroupVisible = false;
+  }
+
+  recoverDeletedPartition(groupId: number): void {
+    this.loaderService.setLoading(true);
+    this.userService.restoreDeletedGroup(groupId)
+    .subscribe(
+      (response) => {
+        this.loaderService.setLoading(false);
+        this.fetchGroups();
+        if (response.status === 'Success') {
+          this.successMessage = response.successMessage;
+        } else {
+          this.errorMessage = response.errorMessage;
+        }
+        this.hideRecoverGroupConfirmationModal();
       },
       (error) => {
         console.error('Error deleting partition:', error);
