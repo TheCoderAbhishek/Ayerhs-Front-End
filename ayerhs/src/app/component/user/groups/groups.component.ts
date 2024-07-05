@@ -35,6 +35,8 @@ export class GroupsComponent implements OnInit {
   public selectedPartitionId: number | null = null;
   currentGroupIdToUpdate = 0;
   currentPartitionIdGroupPresent = 0;
+  isSoftDeletePartitionVisible = false;
+  currentGroupIdToSoftDeleteRecoverHardDelete = 0;
 
   constructor(
     private loaderService: LoaderService,
@@ -170,23 +172,6 @@ export class GroupsComponent implements OnInit {
     }
   }
 
-  toggleGroupStatus(group: any) {
-    group.isActive = !group.isActive;
-    // Make an API call to update the group status on the server
-    // this.groupService.updateGroupStatus(group.id, group.isActive).subscribe(
-    //   (response) => {
-    //     this.successMessage = 'Group status updated successfully.';
-    //     this.errorMessage = '';
-    //   },
-    //   (error) => {
-    //     this.errorMessage = 'Failed to update group status.';
-    //     this.successMessage = '';
-    //     // Revert the change on error
-    //     group.isActive = !group.isActive;
-    //   }
-    // );
-  }
-
   addGroup() {
     this.validateGroupName();
     this.validatePartitionSelection();
@@ -275,8 +260,35 @@ export class GroupsComponent implements OnInit {
     }
   }
 
-  deletePartition(id: number) {
-    // Implement delete partition logic here
+  showSoftDeleteGroupConfirmationModal(groupId: number) {
+    this.currentGroupIdToSoftDeleteRecoverHardDelete = groupId;
+    this.isSoftDeletePartitionVisible = true;
+  }
+
+  hideSoftDeleteGroupConfirmationModal() {
+    this.currentGroupIdToSoftDeleteRecoverHardDelete = 0;
+    this.isSoftDeletePartitionVisible = false;
+  }
+
+  softDeletePartition(groupId: number): void {
+    this.loaderService.setLoading(true);
+    this.userService.softDeleteGroup(groupId)
+    .subscribe(
+      (response) => {
+        this.loaderService.setLoading(false);
+        this.fetchGroups();
+        if (response.status === 'Success') {
+          this.successMessage = response.successMessage;
+        } else {
+          this.errorMessage = response.errorMessage;
+        }
+        this.hideSoftDeleteGroupConfirmationModal();
+      },
+      (error) => {
+        console.error('Error deleting partition:', error);
+        this.loaderService.setLoading(false);
+      }
+    );
   }
 
   exportPDF() {

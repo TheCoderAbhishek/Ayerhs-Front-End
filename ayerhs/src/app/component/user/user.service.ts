@@ -91,4 +91,26 @@ export class UserService {
       return throwError('Token unavailable');
     }
   }
+
+  softDeleteGroup(id: number): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.patch(`${this.baseUrl}/SoftDeleteGroup/${id}`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
+      return throwError('Token unavailable');
+    }
+  }
+
+  restoreDeletedGroup(id: number): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.patch(`${this.baseUrl}/RecoverDeletedGroup/${id}`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
+      return throwError('Token unavailable');
+    }
+  }
 }
