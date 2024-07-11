@@ -113,4 +113,15 @@ export class UserService {
       return throwError('Token unavailable');
     }
   }
+
+  deleteGroup(id: number): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.delete(`${this.baseUrl}/DeleteGroup/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
+      return throwError('Token unavailable');
+    }
+  }
 }

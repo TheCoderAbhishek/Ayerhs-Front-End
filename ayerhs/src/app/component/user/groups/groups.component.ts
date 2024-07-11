@@ -38,6 +38,7 @@ export class GroupsComponent implements OnInit {
   isSoftDeleteGroupVisible = false;
   currentGroupIdToSoftDeleteRecoverHardDelete = 0;
   isRecoverDeletedGroupVisible = false;
+  isDeleteGroup = false;
 
   constructor(
     private loaderService: LoaderService,
@@ -315,6 +316,37 @@ export class GroupsComponent implements OnInit {
           this.errorMessage = response.errorMessage;
         }
         this.hideRecoverGroupConfirmationModal();
+      },
+      (error) => {
+        console.error('Error deleting partition:', error);
+        this.loaderService.setLoading(false);
+      }
+    );
+  }
+
+  showDeleteGroupConfirmationModal(groupId: number) {
+    this.currentGroupIdToSoftDeleteRecoverHardDelete = groupId;
+    this.isDeleteGroup = true;
+  }
+
+  hideDeleteGroupConfirmationModal() {
+    this.currentGroupIdToSoftDeleteRecoverHardDelete = 0;
+    this.isDeleteGroup = false;
+  }
+
+  deleteGroup(groupId: number): void {
+    this.loaderService.setLoading(true);
+    this.userService.deleteGroup(groupId)
+    .subscribe(
+      (response) => {
+        this.loaderService.setLoading(false);
+        this.fetchGroups();
+        if (response.status === 'Success') {
+          this.successMessage = response.successMessage;
+        } else {
+          this.errorMessage = response.errorMessage;
+        }
+        this.hideDeleteGroupConfirmationModal();
       },
       (error) => {
         console.error('Error deleting partition:', error);
