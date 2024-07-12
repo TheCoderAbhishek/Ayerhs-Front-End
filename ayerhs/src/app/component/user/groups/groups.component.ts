@@ -32,6 +32,7 @@ export class GroupsComponent implements OnInit {
   partitionError: string | null = null;
   groupNameError: string | null = null;
   addGroupPartitions: any[] = [];
+  changePartitionGroupPartitions: any[] = [];
   public selectedPartitionId: number | null = null;
   currentGroupIdToUpdate = 0;
   currentPartitionIdGroupPresent = 0;
@@ -39,6 +40,11 @@ export class GroupsComponent implements OnInit {
   currentGroupIdToSoftDeleteRecoverHardDelete = 0;
   isRecoverDeletedGroupVisible = false;
   isDeleteGroup = false;
+  isChangePartitionGroupConfirmationModal = false;
+  groupName: string | null = null;
+  groupId = 0;
+  partitionId = 0;
+  isChangePartitionGroupModal = false;
 
   constructor(
     private loaderService: LoaderService,
@@ -240,23 +246,22 @@ export class GroupsComponent implements OnInit {
       };
       this.loaderService.setLoading(true);
 
-      this.userService.updateGroup(updateGroup)
-      .subscribe(
+      this.userService.updateGroup(updateGroup).subscribe(
         (response) => {
           this.hideUpdateGroupModal();
           this.loaderService.setLoading(false);
           this.fetchGroups();
           if (response.status === 'Success') {
             this.successMessage = response.successMessage;
-          }
-          else {
+          } else {
             this.errorMessage = response.errorMessage;
           }
-        }, (error) => {
+        },
+        (error) => {
           console.error('Error updating group:', error);
           this.loaderService.setLoading(false);
         }
-      )
+      );
     } else {
       console.error('Invalid Group Name Provided.');
     }
@@ -274,8 +279,7 @@ export class GroupsComponent implements OnInit {
 
   softDeleteGroup(groupId: number): void {
     this.loaderService.setLoading(true);
-    this.userService.softDeleteGroup(groupId)
-    .subscribe(
+    this.userService.softDeleteGroup(groupId).subscribe(
       (response) => {
         this.loaderService.setLoading(false);
         this.fetchGroups();
@@ -305,8 +309,7 @@ export class GroupsComponent implements OnInit {
 
   recoverDeletedGroup(groupId: number): void {
     this.loaderService.setLoading(true);
-    this.userService.restoreDeletedGroup(groupId)
-    .subscribe(
+    this.userService.restoreDeletedGroup(groupId).subscribe(
       (response) => {
         this.loaderService.setLoading(false);
         this.fetchGroups();
@@ -336,8 +339,7 @@ export class GroupsComponent implements OnInit {
 
   deleteGroup(groupId: number): void {
     this.loaderService.setLoading(true);
-    this.userService.deleteGroup(groupId)
-    .subscribe(
+    this.userService.deleteGroup(groupId).subscribe(
       (response) => {
         this.loaderService.setLoading(false);
         this.fetchGroups();
@@ -353,6 +355,64 @@ export class GroupsComponent implements OnInit {
         this.loaderService.setLoading(false);
       }
     );
+  }
+
+  showChangePartitionGroupConfirmationModal(groupId: number, partitionId: number, groupName: string){
+    this.groupName = groupName;
+    this.groupId = groupId;
+    this.partitionId = partitionId;
+    this.isChangePartitionGroupConfirmationModal = true;
+  }
+
+  hideChangePartitionGroupConfirmationModal(){
+    this.isChangePartitionGroupConfirmationModal = false;
+  }
+
+  showChangePartitionGroupModal(){
+    this.isChangePartitionGroupModal = true;
+    this.userService.getPartitions().subscribe((response) => {
+      if (response && response.returnValue) {
+        this.changePartitionGroupPartitions = response.returnValue.$values;
+      }
+      this.loaderService.setLoading(false);
+    });
+  }
+
+  hideChangePartitionGroupModal(){
+    this.isChangePartitionGroupModal = false;
+    this.isChangePartitionGroupConfirmationModal = false;
+    this.partitionError = '';
+    this.selectedPartitionId = null;
+  }
+
+  changePartitionGroup() {
+    this.validatePartitionSelection();
+    if (this.partitionError === null) {
+      this.loaderService.setLoading(true);
+      const inChangePartitionGroupDto = {
+        partitionId: this.selectedPartitionId,
+        groupId: this.groupId,
+      };
+      this.userService.changePartitionGroup(inChangePartitionGroupDto).subscribe(
+        (response) => {
+          this.hideChangePartitionGroupModal();
+          this.loaderService.setLoading(false);
+          this.fetchGroups();
+          if (response.status === 'Success') {
+            this.successMessage = response.successMessage;
+          } else {
+            this.errorMessage = response.errorMessage;
+          }
+        },
+        (error) => {
+          console.error('Error changing partition:', error);
+          this.loaderService.setLoading(false);
+        }
+      );
+      this.hideChangePartitionGroupModal();
+    } else {
+      console.error('Invalid Partition Name Selected or Group Name Provided.');
+    }
   }
 
   exportPDF() {

@@ -40,9 +40,13 @@ export class UserService {
   updatePartition(updatePartitionData: any): Observable<any> {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('authToken');
-      return this.http.put(`${this.baseUrl}/UpdatePartition`, updatePartitionData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      return this.http.put(
+        `${this.baseUrl}/UpdatePartition`,
+        updatePartitionData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
     } else {
       return throwError('Token unavailable');
     }
@@ -106,9 +110,13 @@ export class UserService {
   restoreDeletedGroup(id: number): Observable<any> {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('authToken');
-      return this.http.patch(`${this.baseUrl}/RecoverDeletedGroup/${id}`, null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      return this.http.patch(
+        `${this.baseUrl}/RecoverDeletedGroup/${id}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
     } else {
       return throwError('Token unavailable');
     }
@@ -120,6 +128,21 @@ export class UserService {
       return this.http.delete(`${this.baseUrl}/DeleteGroup/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+    } else {
+      return throwError('Token unavailable');
+    }
+  }
+
+  changePartitionGroup(changePartitionGroupData: any): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.patch(
+        `${this.baseUrl}/ChangePartitionGroup`,
+        changePartitionGroupData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
     } else {
       return throwError('Token unavailable');
     }
