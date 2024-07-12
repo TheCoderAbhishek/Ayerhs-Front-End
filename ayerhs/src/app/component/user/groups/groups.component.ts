@@ -272,7 +272,7 @@ export class GroupsComponent implements OnInit {
     this.isSoftDeleteGroupVisible = false;
   }
 
-  softDeletePartition(groupId: number): void {
+  softDeleteGroup(groupId: number): void {
     this.loaderService.setLoading(true);
     this.userService.softDeleteGroup(groupId)
     .subscribe(
@@ -303,7 +303,7 @@ export class GroupsComponent implements OnInit {
     this.isRecoverDeletedGroupVisible = false;
   }
 
-  recoverDeletedPartition(groupId: number): void {
+  recoverDeletedGroup(groupId: number): void {
     this.loaderService.setLoading(true);
     this.userService.restoreDeletedGroup(groupId)
     .subscribe(
