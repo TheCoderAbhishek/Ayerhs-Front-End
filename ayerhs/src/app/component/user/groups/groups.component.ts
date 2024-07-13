@@ -74,7 +74,6 @@ export class GroupsComponent implements OnInit {
           if (response && response.returnValue) {
             this.groups = response.returnValue.$values;
             this.filteredGroups = [...this.groups];
-            this.convertUTCToIST();
           } else {
             console.error('Invalid response structure', response);
           }
@@ -88,34 +87,6 @@ export class GroupsComponent implements OnInit {
     } else {
       this.loaderService.setLoading(false);
     }
-  }
-
-  convertUTCToIST(): void {
-    this.groups.forEach((group) => {
-      group.groupCreatedOn = this.convertToISTString(
-        new Date(group.groupCreatedOn)
-      );
-      group.groupUpdatedOn = this.convertToISTString(
-        new Date(group.groupUpdatedOn)
-      );
-      if (group.partition) {
-        group.partition.partitionCreatedOn = this.convertToISTString(
-          new Date(group.partition.partitionCreatedOn)
-        );
-        group.partition.partitionUpdatedOn = this.convertToISTString(
-          new Date(group.partition.partitionUpdatedOn)
-        );
-      }
-    });
-  }
-
-  convertToISTString(date: Date): string {
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    const istDate = new Date(date.getTime() + istOffset);
-    return istDate.toLocaleString('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      hour12: false,
-    });
   }
 
   filterGroups(event: any): void {
@@ -357,18 +328,22 @@ export class GroupsComponent implements OnInit {
     );
   }
 
-  showChangePartitionGroupConfirmationModal(groupId: number, partitionId: number, groupName: string){
+  showChangePartitionGroupConfirmationModal(
+    groupId: number,
+    partitionId: number,
+    groupName: string
+  ) {
     this.groupName = groupName;
     this.groupId = groupId;
     this.partitionId = partitionId;
     this.isChangePartitionGroupConfirmationModal = true;
   }
 
-  hideChangePartitionGroupConfirmationModal(){
+  hideChangePartitionGroupConfirmationModal() {
     this.isChangePartitionGroupConfirmationModal = false;
   }
 
-  showChangePartitionGroupModal(){
+  showChangePartitionGroupModal() {
     this.isChangePartitionGroupModal = true;
     this.userService.getPartitions().subscribe((response) => {
       if (response && response.returnValue) {
@@ -378,7 +353,7 @@ export class GroupsComponent implements OnInit {
     });
   }
 
-  hideChangePartitionGroupModal(){
+  hideChangePartitionGroupModal() {
     this.isChangePartitionGroupModal = false;
     this.isChangePartitionGroupConfirmationModal = false;
     this.partitionError = '';
@@ -393,22 +368,24 @@ export class GroupsComponent implements OnInit {
         partitionId: this.selectedPartitionId,
         groupId: this.groupId,
       };
-      this.userService.changePartitionGroup(inChangePartitionGroupDto).subscribe(
-        (response) => {
-          this.hideChangePartitionGroupModal();
-          this.loaderService.setLoading(false);
-          this.fetchGroups();
-          if (response.status === 'Success') {
-            this.successMessage = response.successMessage;
-          } else {
-            this.errorMessage = response.errorMessage;
+      this.userService
+        .changePartitionGroup(inChangePartitionGroupDto)
+        .subscribe(
+          (response) => {
+            this.hideChangePartitionGroupModal();
+            this.loaderService.setLoading(false);
+            this.fetchGroups();
+            if (response.status === 'Success') {
+              this.successMessage = response.successMessage;
+            } else {
+              this.errorMessage = response.errorMessage;
+            }
+          },
+          (error) => {
+            console.error('Error changing partition:', error);
+            this.loaderService.setLoading(false);
           }
-        },
-        (error) => {
-          console.error('Error changing partition:', error);
-          this.loaderService.setLoading(false);
-        }
-      );
+        );
       this.hideChangePartitionGroupModal();
     } else {
       console.error('Invalid Partition Name Selected or Group Name Provided.');

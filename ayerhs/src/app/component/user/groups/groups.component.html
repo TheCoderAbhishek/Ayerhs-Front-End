@@ -113,24 +113,33 @@
         >
           <td class="px-6 py-4">{{ i + 1 }}</td>
           <td class="px-6 py-4" hidden>{{ group.id }}</td>
-          <th
+          <td
             scope="row"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
             {{ group.groupName }}
-          </th>
-          <th
+          </td>
+          <td
             scope="row"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
             {{ group.partition.partitionName }}
-          </th>
-          <th
+          </td>
+          <td
             scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            [ngClass]="
+              group.isActive
+                ? 'text-green-500 text-center text-lg'
+                : 'text-red-500 text-center text-lg'
+            "
           >
-            {{ group.isActive }}
-          </th>
+            <i
+              [ngClass]="
+                group.isActive ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'
+              "
+              class="text-md"
+            ></i>
+          </td>
           <td class="px-6 py-4">
             {{ group.groupCreatedOn | date : "dd/MM/yyyy HH:mm:ss" : "IST" }}
             IST
@@ -156,7 +165,7 @@
             <button
               class="text-white py-2 px-4 rounded ml-2"
               [ngClass]="
-                group.isDeleted
+                group.isActive
                   ? 'bg-green-500 hover:bg-green-700'
                   : 'bg-red-500 hover:bg-red-700'
               "
@@ -210,7 +219,7 @@
               title="Permanent Delete Group"
               (click)="showDeleteGroupConfirmationModal(group.id)"
             >
-              <i class="fa-solid fa-ban"></i>
+              <i class="fa-regular fa-square-minus"></i>
             </button>
           </td>
         </tr>
@@ -816,7 +825,7 @@
             class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
             (click)="changePartitionGroup()"
           >
-            Add Group
+            Change Partition
           </button>
           <button
             type="button"

@@ -163,25 +163,6 @@ export class PartitionsComponent {
     this.sortPartitions();
   }
 
-  convertUTCToIST(): void {
-    this.partitions.forEach((partition) => {
-      const utcDate = new Date(partition.partitionCreatedOn);
-      partition.partitionCreatedOn = this.convertToISTString(utcDate);
-
-      const utcUpdateDate = new Date(partition.partitionUpdatedOn);
-      partition.partitionUpdatedOn = this.convertToISTString(utcUpdateDate);
-    });
-  }
-
-  convertToISTString(utcDate: Date): string {
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    const istDate = new Date(utcDate.getTime() + istOffset);
-    return istDate.toLocaleString('en-US', {
-      timeZone: 'Asia/Kolkata',
-      hour12: false,
-    });
-  }
-
   showConfirmationModal(): void {
     this.isConfirmationModalVisible = true;
   }
