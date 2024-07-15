@@ -45,6 +45,8 @@ export class GroupsComponent implements OnInit {
   groupId = 0;
   partitionId = 0;
   isChangePartitionGroupModal = false;
+  isEnableDisableGroupConfirmationModal = false;
+  isActive = false;
 
   constructor(
     private loaderService: LoaderService,
@@ -390,6 +392,38 @@ export class GroupsComponent implements OnInit {
     } else {
       console.error('Invalid Partition Name Selected or Group Name Provided.');
     }
+  }
+
+  showEnableDisableGroupConfirmationModal(id: number, isActive: boolean) {
+    this.isEnableDisableGroupConfirmationModal = true;
+    this.groupId = id;
+    this.isActive = isActive;
+  }
+
+  hideEnableDisableGroupConfirmationModal() {
+    this.isEnableDisableGroupConfirmationModal = false;
+    this.groupId = 0;
+    this.isActive = false;
+  }
+
+  enableDisableGroup() {
+    this.loaderService.setLoading(true);
+    this.userService.enableDisableGroup(this.groupId).subscribe(
+      (response) => {
+        this.loaderService.setLoading(false);
+        this.fetchGroups();
+        if (response.status === 'Success') {
+          this.successMessage = response.successMessage;
+        } else {
+          this.errorMessage = response.errorMessage;
+        }
+        this.hideEnableDisableGroupConfirmationModal();
+      },
+      (error) => {
+        console.error('Error enabling or disableing group:', error);
+        this.loaderService.setLoading(false);
+      }
+    );
   }
 
   exportPDF() {

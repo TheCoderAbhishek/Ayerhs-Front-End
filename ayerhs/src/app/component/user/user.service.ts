@@ -147,4 +147,19 @@ export class UserService {
       return throwError('Token unavailable');
     }
   }
+
+  enableDisableGroup(id: number): Observable<any> {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      return this.http.patch(
+        `${this.baseUrl}/EnableDisableGroup/${id}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } else {
+      return throwError('Token unavailable');
+    }
+  }
 }
