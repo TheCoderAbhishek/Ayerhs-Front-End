@@ -1,0 +1,915 @@
+<div
+  class="relative overflow-x-auto shadow-md sm:rounded-lg"
+  *ngIf="!isLoading"
+>
+  <div class="alert-container" *ngIf="successMessage || errorMessage">
+    <div
+      *ngIf="successMessage"
+      class="alert alert-success flex items-center p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg"
+      role="alert"
+    >
+      <i class="fas fa-check-circle mr-2"></i>
+      {{ successMessage }}
+      <button
+        type="button"
+        class="close ml-auto"
+        aria-label="Close"
+        (click)="hideAlert()"
+      >
+        <i class="fa-regular fa-circle-xmark"></i>
+      </button>
+    </div>
+
+    <div
+      *ngIf="errorMessage"
+      class="alert alert-danger flex items-center p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
+      role="alert"
+    >
+      <i class="fas fa-exclamation-circle mr-2"></i>
+      {{ errorMessage }}
+      <button
+        type="button"
+        class="close ml-auto"
+        aria-label="Close"
+        (click)="hideAlert()"
+      >
+        <i class="fa-regular fa-circle-xmark"></i>
+      </button>
+    </div>
+  </div>
+  <div class="max-w-full overflow-hidden">
+    <h1 class="text-2xl text-gray-900 dark:text-gray-900 p-3">Groups</h1>
+    <div class="p-3 flex justify-between items-center">
+      <div class="flex-1">
+        <input
+          type="text"
+          id="groupsNameSearchFilter"
+          class="w-1/3 bg-gray-300 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Search groups..."
+        />
+      </div>
+      <div class="flex space-x-2 sm:space-x-2 sm:flex-1 sm:justify-end">
+        <button
+          (click)="showAddGroupConfirmationModal()"
+          class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
+        >
+          Add Group
+        </button>
+        <button
+          (click)="exportPDF()"
+          class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md"
+        >
+          <i class="fa-solid fa-file-pdf mr-2"></i>
+          Export PDF
+        </button>
+        <button
+          (click)="exportExcel()"
+          class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
+        >
+          <i class="fa-solid fa-file-excel mr-2"></i>
+          Export Excel
+        </button>
+      </div>
+    </div>
+    <table
+      class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+    >
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-3">Sr No</th>
+          <th scope="col" class="px-6 py-3" hidden>Id</th>
+          <th scope="col" class="px-6 py-3">
+            Group Name
+            <a (click)="toggleSortDirection('groupName')">
+              <i class="fas fa-sort ms-1.5"></i>
+            </a>
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Partition Name
+            <a (click)="toggleSortDirection('partitionName')">
+              <i class="fas fa-sort ms-1.5"></i>
+            </a>
+          </th>
+          <th scope="col" class="px-6 py-3">Is Active</th>
+          <th scope="col" class="px-6 py-3">Created On</th>
+          <th scope="col" class="px-6 py-3">Updated On</th>
+          <th scope="col" class="px-6 py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="filteredGroups.length === 0">
+          <td
+            colspan="8"
+            class="bg-white border-b dark:bg-gray-900 dark:border-gray-800 px-6 py-4 text-center"
+          >
+            No data available
+          </td>
+        </tr>
+        <tr
+          class="bg-white border-b dark:bg-gray-900 dark:border-gray-800"
+          *ngFor="let group of filteredGroups; let i = index"
+        >
+          <td class="px-6 py-4">{{ i + 1 }}</td>
+          <td class="px-6 py-4" hidden>{{ group.id }}</td>
+          <td
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          >
+            {{ group.groupName }}
+          </td>
+          <td
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          >
+            {{ group.partition.partitionName }}
+          </td>
+          <td
+            scope="row"
+            [ngClass]="
+              group.isActive
+                ? 'text-green-500 text-center text-lg'
+                : 'text-red-500 text-center text-lg'
+            "
+          >
+            <i
+              [ngClass]="
+                group.isActive
+                  ? 'fa-solid fa-circle-check'
+                  : 'fa-solid fa-circle-xmark'
+              "
+              class="text-md"
+            ></i>
+          </td>
+          <td class="px-6 py-4">
+            {{ group.groupCreatedOn | date : "dd/MM/yyyy HH:mm:ss" : "IST" }}
+            IST
+          </td>
+          <td class="px-6 py-4">
+            {{ group.groupUpdatedOn | date : "dd/MM/yyyy HH:mm:ss" : "IST" }}
+            IST
+          </td>
+          <td class="px-6 py-4 text-left">
+            <button
+              (click)="
+                showUpdateGroupConfirmationModal(
+                  group.id,
+                  group.partition.id,
+                  group.groupName
+                )
+              "
+              class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+              title="Edit Group"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+            <button
+              class="text-white py-2 px-4 rounded ml-2"
+              [ngClass]="
+                group.isActive
+                  ? 'bg-green-500 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-700'
+              "
+              [title]="group.isActive ? 'Disable Group' : 'Enable Group'"
+              (click)="
+                showEnableDisableGroupConfirmationModal(
+                  group.id,
+                  group.isActive
+                )
+              "
+            >
+              <i
+                [ngClass]="
+                  group.isActive ? 'fas fa-toggle-on' : 'fas fa-toggle-off'
+                "
+                class="text-md"
+              ></i>
+            </button>
+            <button
+              class="bg-yellow-500 hover:bg-yellow-700 text-white py-2 px-4 rounded ml-2"
+              title="Change Partition"
+              (click)="
+                showChangePartitionGroupConfirmationModal(
+                  group.id,
+                  group.partition.id,
+                  group.groupName
+                )
+              "
+            >
+              <i class="fa fa-exchange"></i>
+            </button>
+            <button
+              class="text-white py-2 px-4 rounded ml-2"
+              [ngClass]="
+                group.isDeleted
+                  ? 'bg-green-500 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-700'
+              "
+              [title]="group.isDeleted ? 'Restore Group' : 'Soft Delete Group'"
+              (click)="
+                group.isDeleted
+                  ? showRecoverGroupConfirmationModal(group.id)
+                  : showSoftDeleteGroupConfirmationModal(group.id)
+              "
+            >
+              <i
+                [ngClass]="
+                  group.isDeleted
+                    ? 'fas fa-trash-can-arrow-up'
+                    : 'fas fa-trash-can'
+                "
+                class="text-md"
+              ></i>
+            </button>
+            <button
+              class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded ml-2"
+              title="Permanent Delete Group"
+              (click)="showDeleteGroupConfirmationModal(group.id)"
+            >
+              <i class="fa-regular fa-square-minus"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<app-loader *ngIf="isLoading"></app-loader>
+
+<!-- Add Group Confirmation Modal -->
+<div
+  *ngIf="isAddGroupConfirmationModalVisible"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fa-solid fa-check text-green-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Add Group
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  Are you sure you want to add a new group?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="showAddGroupModal()"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideAddGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Group Modal -->
+<div
+  *ngIf="isAddGroupModalVisible"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Add Group
+              </h3>
+              <div class="mt-2">
+                <select
+                  [(ngModel)]="selectedPartitionId"
+                  class="w-full bg-gray-300 border-gray-300 text-gray-500 dark:border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mb-4"
+                  id="partitionSelect"
+                  (change)="validatePartitionSelection()"
+                >
+                  <option [ngValue]="null" [disabled]="true">
+                    Select Partition Name
+                  </option>
+                  <option
+                    *ngFor="let partition of addGroupPartitions"
+                    [value]="partition.id"
+                  >
+                    {{ partition.partitionName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="partitionError"
+                  class="text-red-600 text-xs pl-2 mb-4"
+                >
+                  {{ partitionError }}
+                </div>
+                <input
+                  type="text"
+                  [(ngModel)]="newGroupName"
+                  class="w-full bg-gray-300 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Group Name"
+                  id="newGroupName"
+                  (input)="validateGroupName()"
+                />
+                <div
+                  *ngIf="groupNameError"
+                  class="text-red-600 mt-2 text-xs pl-2"
+                >
+                  {{ groupNameError }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="addGroup()"
+          >
+            Add Group
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideAddGroupModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Group Confirmation Modal -->
+<div
+  *ngIf="isUpdateGroupConfirmationModalVisible"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fas fa-exclamation-triangle text-red-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Update Group
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  Are you sure you want to update group?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="showUpdateGroupModal()"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideUpdateGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Group Modal -->
+<div
+  *ngIf="isUpdateGroupModalVisible"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Update Partition
+              </h3>
+              <div class="mt-2">
+                <input
+                  type="text"
+                  [(ngModel)]="newGroupName"
+                  class="w-full bg-gray-300 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Partition Name"
+                  id="newPartitionName"
+                  (input)="validateGroupName()"
+                />
+                <div
+                  *ngIf="groupNameError"
+                  class="text-red-600 mt-2 text-xs pl-2"
+                >
+                  {{ groupNameError }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="updateGroup()"
+          >
+            Update Partition
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideUpdateGroupModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Soft Delete Group Confirmation Modal -->
+<div
+  *ngIf="isSoftDeleteGroupVisible"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fas fa-exclamation-triangle text-red-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Soft Delete Group
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  Are you sure you want to soft delete group?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="
+              softDeleteGroup(currentGroupIdToSoftDeleteRecoverHardDelete)
+            "
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideSoftDeleteGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recover Soft Deleted Group Confirmation Modal -->
+<div
+  *ngIf="isRecoverDeletedGroupVisible"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fas fa-exclamation-triangle text-red-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Recover Group
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  Are you sure you want to recover soft deleted group?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="
+              recoverDeletedGroup(currentGroupIdToSoftDeleteRecoverHardDelete)
+            "
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideRecoverGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Group Confirmation Modal -->
+<div
+  *ngIf="isDeleteGroup"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fas fa-exclamation-triangle text-red-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Permanent Delete Group
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  Are you sure you want to delete group because once deleted you
+                  cannot recover it?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="deleteGroup(currentGroupIdToSoftDeleteRecoverHardDelete)"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideDeleteGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Change Partition for Group Confirmation Modal -->
+<div
+  *ngIf="isChangePartitionGroupConfirmationModal"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fas fa-exclamation-triangle text-red-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Change Partition For Group : {{ groupName }}
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  Are you sure you want to change partition of group?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="showChangePartitionGroupModal()"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideChangePartitionGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Change Partition for Group Modal -->
+<div
+  *ngIf="isChangePartitionGroupModal"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Change Partition for Group : {{ groupName }}
+              </h3>
+              <div class="mt-2">
+                <select
+                  [(ngModel)]="selectedPartitionId"
+                  class="w-full bg-gray-300 border-gray-300 text-gray-500 dark:border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  id="partitionSelect"
+                  (change)="validatePartitionSelection()"
+                >
+                  <option [ngValue]="null" [disabled]="true">
+                    Select Partition Name
+                  </option>
+                  <option
+                    *ngFor="let partition of changePartitionGroupPartitions"
+                    [value]="partition.id"
+                  >
+                    {{ partition.partitionName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="partitionError"
+                  class="text-red-600 text-xs pl-2 mb-4"
+                >
+                  {{ partitionError }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="changePartitionGroup()"
+          >
+            Change Partition
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideChangePartitionGroupModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enable Disable Group Confirmation Modal -->>
+<div
+  *ngIf="isEnableDisableGroupConfirmationModal"
+  class="relative z-10"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    aria-hidden="true"
+  ></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+      >
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div
+              class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+            >
+              <i class="fas fa-exclamation-triangle text-red-600"></i>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900"
+                id="modal-title"
+              >
+                {{ isActive ? "Disable Group" : "Enable Group" }}
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  {{
+                    isActive
+                      ? "Are you sure you want to disable group?"
+                      : "Are you sure you want to enable group?"
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            (click)="enableDisableGroup()"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            (click)="hideEnableDisableGroupConfirmationModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

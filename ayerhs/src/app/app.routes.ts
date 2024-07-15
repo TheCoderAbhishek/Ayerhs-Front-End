@@ -8,6 +8,7 @@ import { ActivateAccountComponent } from './component/account/activate-account/a
 import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
 import { PasswordResetComponent } from './component/account/password-reset/password-reset.component';
 import { PartitionsComponent } from './component/user/partitions/partitions.component';
+import { GroupsComponent } from './component/user/groups/groups.component';
 
 export const routes: Routes = [
   {
@@ -50,6 +51,10 @@ export const routes: Routes = [
       {
         path: 'user/partitions',
         component: PartitionsComponent,
+      },
+      {
+        path: 'user/groups',
+        component: GroupsComponent
       },
     ],
   },

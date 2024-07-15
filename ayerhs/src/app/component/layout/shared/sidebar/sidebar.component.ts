@@ -30,4 +30,8 @@ export class SidebarComponent {
   navigateToPartitions() {
     this.router.navigate(['/user/partitions']);
   }
+
+  navigateToGroups() {
+    this.router.navigate(['/user/groups']);
+  }
 }
